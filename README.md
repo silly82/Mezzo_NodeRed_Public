@@ -270,6 +270,9 @@ nacheinander abgearbeitet. Beim Herunterregeln bleibt der Kanal bei *Min* stehen
 ### Beispiele
 
 ```js
+// Trigger: CH1 auf -15 dB (fertig als examples/mezzo-trigger-demo.json)
+msg.topic = "gain"; msg.channel = 1; msg.payload = -15;
+
 // Kanal 2 stumm
 msg.topic = "mute"; msg.channel = 2; msg.payload = true;
 
@@ -356,6 +359,7 @@ Nach dem Import im Config-Node **den Verstärker auswählen bzw. die IP anpassen
 |---|---|---|
 | `mezzo-basic.json` | Minimalbeispiel: Status bei Änderung, Power, Blink, Mute CH1, Gain | – |
 | `mezzo-dashboard.json` | Ausführliches Dashboard „Mezzo Dashboard“ | Dashboard 2 |
+| `mezzo-trigger-demo.json` | Demo „Trigger → CH1 −15 dB“: beliebige Message (Inject, link-in „Trigger CH1 −15 dB“, MQTT …) setzt CH1 auf −15 dB, Rücksetzen auf 0 dB | – |
 
 ---
 

@@ -1,0 +1,194 @@
+[
+    {
+        "id": "mztd_tab",
+        "type": "tab",
+        "label": "Mezzo Trigger-Demo",
+        "disabled": false,
+        "info": "Demo: jede Message auf \"Trigger\" setzt die Lautstärke (User Gain) von CH1 auf -15 dB."
+    },
+    {
+        "id": "mztd_amp",
+        "type": "mezzo-amp",
+        "name": "Mezzo",
+        "host": "192.168.1.50",
+        "port": 8002,
+        "pollInterval": 2,
+        "meterInterval": 0,
+        "timeout": 1000,
+        "serial": "",
+        "model": ""
+    },
+    {
+        "id": "mztd_c",
+        "type": "comment",
+        "z": "mztd_tab",
+        "name": "Demo Trigger → CH1 −15 dB",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Beliebige Message (Inject, Link, MQTT, HTTP …) auf \"Trigger\" setzt die Lautstärke (User Gain) von CH1 auf −15 dB.\nDer Inhalt der Trigger-Message ist egal: der change-Node setzt payload = -15, der mezzo-control-Node ist fest auf Gain / Kanal 1 eingestellt.\nVon anderen Flows auslösen: link-out auf \"Trigger CH1 −15 dB\" verbinden.\nVor dem Deploy im Config-Node den Verstärker auswählen bzw. die IP eintragen."
+    },
+    {
+        "id": "mztd_trig",
+        "type": "inject",
+        "z": "mztd_tab",
+        "name": "Trigger",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "mztd_set"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_link",
+        "type": "link in",
+        "z": "mztd_tab",
+        "name": "Trigger CH1 −15 dB",
+        "links": [],
+        "x": 145,
+        "y": 140,
+        "wires": [
+            [
+                "mztd_set"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_set",
+        "type": "change",
+        "z": "mztd_tab",
+        "name": "payload = −15 dB",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "-15",
+                "tot": "num"
+            },
+            {
+                "t": "delete",
+                "p": "channel",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "topic",
+                "pt": "msg"
+            }
+        ],
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "mztd_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_reset",
+        "type": "inject",
+        "z": "mztd_tab",
+        "name": "CH1 zurück 0 dB",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "0",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 160,
+        "y": 180,
+        "wires": [
+            [
+                "mztd_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_ctl",
+        "type": "mezzo-control",
+        "z": "mztd_tab",
+        "name": "Gain CH1 (fest)",
+        "amp": "mztd_amp",
+        "command": "gain",
+        "channel": "1",
+        "source": "",
+        "output": "",
+        "step": 1,
+        "min": -60,
+        "max": 15,
+        "block": "gain",
+        "x": 560,
+        "y": 100,
+        "wires": [
+            [
+                "mztd_dbg"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_dbg",
+        "type": "debug",
+        "z": "mztd_tab",
+        "name": "Demo Ergebnis",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "result",
+        "targetType": "msg",
+        "statusVal": "result.appliedDb",
+        "statusType": "msg",
+        "x": 760,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "mztd_catch",
+        "type": "catch",
+        "z": "mztd_tab",
+        "name": "Fehler",
+        "scope": [
+            "mztd_ctl"
+        ],
+        "uncaught": false,
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "mztd_err"
+            ]
+        ]
+    },
+    {
+        "id": "mztd_err",
+        "type": "debug",
+        "z": "mztd_tab",
+        "name": "FEHLER",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "error",
+        "targetType": "msg",
+        "x": 740,
+        "y": 160,
+        "wires": []
+    }
+]
