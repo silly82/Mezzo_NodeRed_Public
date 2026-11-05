@@ -1,0 +1,330 @@
+[
+    {
+        "id": "mz_tab",
+        "type": "tab",
+        "label": "Mezzo Demo",
+        "disabled": false,
+        "info": "Powersoft Mezzo: Status lesen und steuern"
+    },
+    {
+        "id": "mz_amp",
+        "type": "mezzo-amp",
+        "name": "Mezzo 324A",
+        "host": "192.168.1.50",
+        "port": 8002,
+        "pollInterval": 2,
+        "meterInterval": 0,
+        "timeout": 1000,
+        "serial": "",
+        "model": ""
+    },
+    {
+        "id": "mz_status",
+        "type": "mezzo-status",
+        "z": "mz_tab",
+        "name": "Status bei Änderung",
+        "amp": "mz_amp",
+        "mode": "change",
+        "meters": false,
+        "x": 380,
+        "y": 80,
+        "wires": [
+            [
+                "mz_dbg",
+                "mz_alarm"
+            ]
+        ]
+    },
+    {
+        "id": "mz_refresh",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Status jetzt lesen",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "topic": "status",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "mz_status"
+            ]
+        ]
+    },
+    {
+        "id": "mz_alarm",
+        "type": "change",
+        "z": "mz_tab",
+        "name": "alarms.any",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.alarms.any",
+                "tot": "msg"
+            }
+        ],
+        "x": 610,
+        "y": 120,
+        "wires": [
+            [
+                "mz_dbg_alarm"
+            ]
+        ]
+    },
+    {
+        "id": "mz_dbg",
+        "type": "debug",
+        "z": "mz_tab",
+        "name": "Status",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "complete": "payload",
+        "x": 610,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "mz_dbg_alarm",
+        "type": "debug",
+        "z": "mz_tab",
+        "name": "Alarm?",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "complete": "payload",
+        "x": 790,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "mz_on",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Power ON",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 220,
+        "wires": [
+            [
+                "mz_power"
+            ]
+        ]
+    },
+    {
+        "id": "mz_off",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Standby",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 260,
+        "wires": [
+            [
+                "mz_power"
+            ]
+        ]
+    },
+    {
+        "id": "mz_power",
+        "type": "mezzo-control",
+        "z": "mz_tab",
+        "name": "",
+        "amp": "mz_amp",
+        "command": "power",
+        "channel": "",
+        "source": "",
+        "output": "",
+        "x": 380,
+        "y": 240,
+        "wires": [
+            [
+                "mz_dbg_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_blink",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Blink",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "topic": "blink",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "mz_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_mute1",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Mute CH1 ein",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "channel",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "topic": "mute",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 360,
+        "wires": [
+            [
+                "mz_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_unmute1",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Mute CH1 aus",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "channel",
+                "v": "1",
+                "vt": "num"
+            }
+        ],
+        "topic": "mute",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 400,
+        "wires": [
+            [
+                "mz_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_gain",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Gain alle -6 dB",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "topic": "gain",
+        "payload": "-6",
+        "payloadType": "num",
+        "x": 150,
+        "y": 440,
+        "wires": [
+            [
+                "mz_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_gain0",
+        "type": "inject",
+        "z": "mz_tab",
+        "name": "Gain alle 0 dB",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "topic": "gain",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 150,
+        "y": 480,
+        "wires": [
+            [
+                "mz_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_ctl",
+        "type": "mezzo-control",
+        "z": "mz_tab",
+        "name": "Befehl aus topic",
+        "amp": "mz_amp",
+        "command": "msg",
+        "channel": "",
+        "source": "",
+        "output": "",
+        "x": 390,
+        "y": 400,
+        "wires": [
+            [
+                "mz_dbg_ctl"
+            ]
+        ]
+    },
+    {
+        "id": "mz_dbg_ctl",
+        "type": "debug",
+        "z": "mz_tab",
+        "name": "Ergebnis",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "complete": "result",
+        "x": 610,
+        "y": 320,
+        "wires": []
+    }
+]

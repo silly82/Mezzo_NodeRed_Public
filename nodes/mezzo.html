@@ -1,0 +1,379 @@
+<!-- ===================================================================== mezzo-amp (config) -->
+<script type="text/javascript">
+    RED.nodes.registerType('mezzo-amp', {
+        category: 'config',
+        defaults: {
+            name: { value: '' },
+            host: { value: '', required: true },
+            port: { value: 8002, required: true, validate: RED.validators.number() },
+            pollInterval: { value: 2, required: true, validate: RED.validators.number() },
+            meterInterval: { value: 0, validate: RED.validators.number() },
+            timeout: { value: 1000, validate: RED.validators.number() },
+            serial: { value: '' },
+            model: { value: '' }
+        },
+        label: function () {
+            return this.name || ((this.model || 'Mezzo') + ' ' + this.host);
+        },
+        oneditprepare: function () {
+            const node = this;
+            const $sel = $('#mezzo-device');
+            const $host = $('#node-config-input-host');
+            const $info = $('#mezzo-device-info');
+            let found = [];
+
+            const describe = function (d) {
+                return d.modelName + ' – ' + d.ip + (d.nickname ? ' – ' + d.nickname : '') + ' (SN ' + d.serial + ')';
+            };
+            const showInfo = function (d, ok) {
+                if (!d) { $info.text(''); return; }
+                $info.html('<i class="fa ' + (ok ? 'fa-check" style="color:#3a3' : 'fa-info-circle') + '"></i> ' +
+                    RED.utils.sanitize(d.model + ', SN ' + d.serial + ', FW ' + d.firmware + ', MAC ' + d.mac +
+                    (d.nickname ? ', Nickname "' + d.nickname + '"' : '')));
+            };
+            const fill = function () {
+                $sel.empty();
+                $sel.append($('<option>').val('').text(found.length ? '– Mezzo auswählen (' + found.length + ' gefunden) –' : '– manuell (keine Geräte gefunden) –'));
+                found.forEach(function (d, i) { $sel.append($('<option>').val(String(i)).text(describe(d))); });
+                // preselect current config (by serial, else by IP)
+                const idx = found.findIndex(function (d) { return (node.serial && d.serial === node.serial) || d.ip === $host.val(); });
+                if (idx >= 0) { $sel.val(String(idx)); showInfo(found[idx], true); }
+                if (node.serial && idx >= 0 && found[idx].ip !== $host.val()) {
+                    $info.append(' <b style="color:#c60">IP hat sich geändert: ' + RED.utils.sanitize(found[idx].ip) + '</b>');
+                }
+            };
+            const search = function () {
+                const $b = $('#mezzo-search').prop('disabled', true);
+                $b.find('i').addClass('fa-spin');
+                $.getJSON('mezzo/discover').done(function (list) { found = list || []; fill(); })
+                    .fail(function (x) { RED.notify('Mezzo-Suche fehlgeschlagen: ' + (x.responseJSON ? x.responseJSON.error : x.statusText), 'error'); })
+                    .always(function () { $b.prop('disabled', false); $b.find('i').removeClass('fa-spin'); });
+            };
+
+            $sel.on('change', function () {
+                const d = found[Number($(this).val())];
+                if ($(this).val() === '' || !d) { $('#node-config-input-serial').val(''); $('#node-config-input-model').val(''); showInfo(null); return; }
+                $host.val(d.ip);
+                $('#node-config-input-serial').val(d.serial);
+                $('#node-config-input-model').val(d.modelName);
+                if (!$('#node-config-input-name').val()) $('#node-config-input-name').val(d.nickname || d.modelName);
+                showInfo(d, true);
+            });
+            $host.on('input', function () {
+                // manual IP edit: drop the device binding unless it still matches
+                const v = $(this).val().trim();
+                const idx = found.findIndex(function (d) { return d.ip === v; });
+                $sel.val(idx >= 0 ? String(idx) : '');
+                if (idx < 0) { $('#node-config-input-serial').val(''); $('#node-config-input-model').val(''); showInfo(null); }
+            });
+            $('#mezzo-search').on('click', function (e) { e.preventDefault(); search(); });
+            $('#mezzo-test').on('click', function (e) {
+                e.preventDefault();
+                const host = $host.val().trim();
+                if (!host) { RED.notify('Bitte zuerst eine IP eingeben', 'warning'); return; }
+                const $b = $(this).prop('disabled', true);
+                $info.html('<i class="fa fa-spinner fa-spin"></i> teste ' + RED.utils.sanitize(host) + ' …');
+                $.getJSON('mezzo/probe', { host: host, port: $('#node-config-input-port').val() })
+                    .done(function (d) {
+                        showInfo(d, true);
+                        $('#node-config-input-serial').val(d.serial);
+                        $('#node-config-input-model').val(d.modelName);
+                        if (!found.some(function (x) { return x.ip === d.ip; })) { found.push(d); fill(); }
+                        RED.notify('Verbunden: ' + d.modelName + ' (SN ' + d.serial + ')', 'success');
+                    })
+                    .fail(function (x) {
+                        $info.html('<i class="fa fa-times" style="color:#c33"></i> ' + RED.utils.sanitize(x.responseJSON ? x.responseJSON.error : 'keine Antwort'));
+                    })
+                    .always(function () { $b.prop('disabled', false); });
+            });
+
+            $sel.append($('<option>').val('').text('– suche Mezzo-Verstärker … –'));
+            search();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="mezzo-amp">
+    <div class="form-row">
+        <label for="mezzo-device"><i class="fa fa-search"></i> Mezzo</label>
+        <select id="mezzo-device" style="width:calc(70% - 50px)"></select>
+        <button id="mezzo-search" class="red-ui-button" title="Netzwerk nach Mezzo-Verstärkern durchsuchen"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="fa fa-server"></i> IP-Adresse</label>
+        <input type="text" id="node-config-input-host" placeholder="192.168.1.50" style="width:calc(70% - 120px)">
+        <button id="mezzo-test" class="red-ui-button" title="Verbindung zu dieser IP testen"><i class="fa fa-plug"></i> Testen</button>
+    </div>
+    <div class="form-row">
+        <label></label>
+        <span id="mezzo-device-info" style="font-size:0.9em; display:inline-block; width:70%"></span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="z.B. Mezzo Saal">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-model"><i class="fa fa-cube"></i> Modell</label>
+        <input type="text" id="node-config-input-model" readonly style="width:200px">
+        <label for="node-config-input-serial" style="width:60px; margin-left:10px">SN</label>
+        <input type="text" id="node-config-input-serial" readonly style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="fa fa-plug"></i> UDP Port</label>
+        <input type="number" id="node-config-input-port" style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-pollInterval"><i class="fa fa-clock-o"></i> Status-Poll (s)</label>
+        <input type="number" id="node-config-input-pollInterval" step="0.5" min="0.2" style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-meterInterval"><i class="fa fa-bar-chart"></i> Meter-Poll (s)</label>
+        <input type="number" id="node-config-input-meterInterval" step="0.1" min="0" style="width:100px"> <span>0 = aus</span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-timeout"><i class="fa fa-hourglass"></i> Timeout (ms)</label>
+        <input type="number" id="node-config-input-timeout" style="width:100px">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="mezzo-amp">
+    <p>Verbindung zu einem Powersoft Mezzo Verstärker (PBus über UDP, Port 8002).</p>
+    <p><b>Mezzo</b>: Beim Öffnen wird das Netzwerk per Broadcast durchsucht; gefundene Geräte erscheinen im
+       Auswahlmenü (Modell, IP, Nickname, Seriennummer). Die Auswahl füllt IP, Modell und Seriennummer aus.
+       <i class="fa fa-refresh"></i> sucht erneut.</p>
+    <p><b>IP-Adresse</b>: kann auch manuell eingetragen werden (z.B. Gerät in anderem Subnetz, wo kein Broadcast
+       ankommt). <i class="fa fa-plug"></i> Testen prüft, ob unter der IP ein Mezzo antwortet.</p>
+    <p>Die Seriennummer wird gespeichert: antwortet unter der IP später ein anderes Gerät, erscheint eine Warnung im Log.</p>
+    <p>Der Mezzo erlaubt nur <b>eine</b> UDP-Steuerverbindung gleichzeitig. Pro Gerät daher nur einen
+       Config-Node verwenden und Armonía Plus parallel möglichst nicht mit dem Gerät verbinden.</p>
+    <p>Der Status (Standby, Alarme, Temperaturen, Gain/Mute) wird zyklisch gelesen; Meter (Spannung/Strom/Pegel)
+       optional mit separatem Intervall.</p>
+</script>
+
+<!-- ===================================================================== mezzo-status -->
+<script type="text/javascript">
+    RED.nodes.registerType('mezzo-status', {
+        category: 'Powersoft',
+        color: '#E2D96E',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'mezzo-amp', required: true },
+            mode: { value: 'change' },
+            meters: { value: false }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-tachometer',
+        label: function () { return this.name || 'Mezzo Status'; },
+        paletteLabel: 'mezzo status'
+    });
+</script>
+
+<script type="text/html" data-template-name="mezzo-status">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-mode"><i class="fa fa-filter"></i> Ausgabe</label>
+        <select id="node-input-mode">
+            <option value="change">bei Zustandsänderung</option>
+            <option value="always">bei jedem Poll</option>
+            <option value="manual">nur auf Input-Message</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-meters"><i class="fa fa-bar-chart"></i> Meter</label>
+        <input type="checkbox" id="node-input-meters" style="width:auto"> Meter-Werte ausgeben (Meter-Poll im Config-Node aktivieren)
+    </div>
+</script>
+
+<script type="text/html" data-help-name="mezzo-status">
+    <p>Liefert Status und Messwerte eines Powersoft Mezzo.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>leer/<code>status</code>: Status sofort lesen. <code>meters</code>: Meter lesen.
+            <code>read</code> mit <code>payload = {address, size}</code>: Rohzugriff (lesen).</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd><code>status</code>, <code>meters</code> oder <code>connection</code></dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Bei <code>status</code>: <code>info</code> (Modell, Serie, FW, MAC), <code>nickname</code>, <code>network</code>,
+            <code>standby</code>/<code>on</code>, <code>autoPowerDown</code>, <code>supply</code> (Temperaturen, Netzspannung, Rails),
+            <code>channelTemp[4]</code>, <code>alarms</code> (inkl. <code>any</code>, <code>fault</code>, <code>faults</code>,
+            <code>protectionMutes</code>), <code>user</code>, <code>output</code>, <code>input</code>, <code>matrix</code>
+            (Gain in dB, <code>null</code> = -∞ / aus; Mute als boolean, Index 0 = Kanal 1).</dd>
+    </dl>
+    <p>„bei Zustandsänderung“ ignoriert die laufend schwankenden Analogwerte (<code>supply</code>, <code>channelTemp</code>).</p>
+</script>
+
+<!-- ===================================================================== mezzo-control -->
+<script type="text/javascript">
+    RED.nodes.registerType('mezzo-control', {
+        category: 'Powersoft',
+        color: '#E2D96E',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'mezzo-amp', required: true },
+            command: { value: 'msg' },
+            channel: { value: '' },
+            source: { value: '' },
+            output: { value: '' },
+            step: { value: 1, validate: function (v) { return v === '' || (Number(v) > 0 && Number(v) <= 20); } },
+            min: { value: -60, validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            max: { value: 15, validate: function (v) { return v === '' || (!isNaN(Number(v)) && Number(v) <= 15); } },
+            block: { value: 'gain' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-sliders',
+        label: function () {
+            if (this.name) return this.name;
+            const ch = this.channel && this.channel !== 'all' ? ' CH' + this.channel : '';
+            if (this.command === 'volumeUp') return 'Lautstärke +' + (this.step || 1) + ' dB' + ch;
+            if (this.command === 'volumeDown') return 'Lautstärke −' + (this.step || 1) + ' dB' + ch;
+            if (this.command && this.command !== 'msg') return 'Mezzo ' + this.command + ch;
+            return 'Mezzo Control';
+        },
+        paletteLabel: 'mezzo control',
+        oneditprepare: function () {
+            const upd = function () {
+                const c = $('#node-input-command').val();
+                const ch = ['mute', 'gain', 'polarity', 'outputMute', 'outputGain', 'inputMute', 'inputGain',
+                    'volumeUp', 'volumeDown', 'gainStep', 'msg'].indexOf(c) >= 0;
+                const mx = ['matrixGain', 'matrixMute', 'msg'].indexOf(c) >= 0;
+                const vol = ['volumeUp', 'volumeDown', 'gainStep', 'gain', 'outputGain', 'inputGain', 'msg'].indexOf(c) >= 0;
+                const rel = ['volumeUp', 'volumeDown', 'msg'].indexOf(c) >= 0;
+                $('.mezzo-row-channel').toggle(ch);
+                $('.mezzo-row-matrix').toggle(mx);
+                $('.mezzo-row-volume').toggle(vol);
+                $('.mezzo-row-step').toggle(rel);
+                $('.mezzo-row-block').toggle(['volumeUp', 'volumeDown', 'gainStep', 'msg'].indexOf(c) >= 0);
+            };
+            $('#node-input-command').on('change', upd);
+            upd();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="mezzo-control">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-command"><i class="fa fa-cog"></i> Befehl</label>
+        <select id="node-input-command">
+            <option value="msg">aus msg.topic</option>
+            <option value="power">Power (true = ein)</option>
+            <option value="standby">Standby (true = Standby)</option>
+            <option value="blink">Blink / Identify</option>
+            <option value="volumeUp">Lautstärke + (Taster)</option>
+            <option value="volumeDown">Lautstärke − (Taster)</option>
+            <option value="gainStep">Lautstärke ± payload dB</option>
+            <option value="mute">Mute (User-Block)</option>
+            <option value="gain">Gain dB (User-Block)</option>
+            <option value="polarity">Polarität invertieren (User)</option>
+            <option value="outputMute">Output Mute (Way)</option>
+            <option value="outputGain">Output Gain dB (Way)</option>
+            <option value="inputMute">Input Mute (Matrix Pre)</option>
+            <option value="inputGain">Input Gain dB (Matrix Pre)</option>
+            <option value="matrixGain">Matrix Kreuzpunkt Gain dB</option>
+            <option value="matrixMute">Matrix Kreuzpunkt Mute</option>
+            <option value="nickname">Nickname</option>
+            <option value="autoPowerDown">Auto Power Down</option>
+            <option value="reboot">Reboot</option>
+            <option value="write">Raw Write</option>
+        </select>
+    </div>
+    <div class="form-row mezzo-row-channel">
+        <label for="node-input-channel"><i class="fa fa-random"></i> Kanal</label>
+        <select id="node-input-channel" style="width:120px">
+            <option value="">aus msg / alle</option>
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="all">alle</option>
+        </select>
+    </div>
+    <div class="form-row mezzo-row-volume mezzo-row-block">
+        <label for="node-input-block"><i class="fa fa-volume-up"></i> Gain-Block</label>
+        <select id="node-input-block" style="width:200px">
+            <option value="gain">User Gain (empfohlen)</option>
+            <option value="output">Output Gain (Way)</option>
+            <option value="input">Input Gain (Matrix Pre)</option>
+        </select>
+    </div>
+    <div class="form-row mezzo-row-volume">
+        <label for="node-input-step" class="mezzo-row-step"><i class="fa fa-arrows-v"></i> Schritt dB</label>
+        <input type="number" id="node-input-step" step="0.5" min="0.1" style="width:70px" class="mezzo-row-step">
+        <label for="node-input-min" style="width:40px; margin-left:10px">Min</label>
+        <input type="number" id="node-input-min" step="1" style="width:70px">
+        <label for="node-input-max" style="width:40px; margin-left:10px">Max</label>
+        <input type="number" id="node-input-max" step="1" max="15" style="width:70px">
+    </div>
+    <div class="form-row mezzo-row-matrix">
+        <label for="node-input-source"><i class="fa fa-sign-in"></i> Quelle</label>
+        <select id="node-input-source" style="width:120px">
+            <option value="">aus msg</option>
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+        </select>
+        <label for="node-input-output" style="margin-left:20px; width:60px">Ausgang</label>
+        <select id="node-input-output" style="width:120px">
+            <option value="">aus msg</option>
+            <option value="1">A (1)</option><option value="2">B (2)</option>
+            <option value="3">C (3)</option><option value="4">D (4)</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="mezzo-control">
+    <p>Steuert einen Powersoft Mezzo. Der Wert kommt immer aus <code>msg.payload</code>.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Befehl, wenn im Node „aus msg.topic“ gewählt ist (Alternativ <code>msg.command</code>).</dd>
+        <dt>payload <span class="property-type">boolean | number | string | object</span></dt>
+        <dd>Wert: boolean für Schalter (<code>true/false</code>, <code>1/0</code>, <code>"on"/"off"</code>),
+            Zahl in dB für Gains (<code>null</code> oder <code>"off"</code> = -∞, max. +15 dB; bei <code>gain</code>,
+            <code>outputGain</code>, <code>inputGain</code> wird auf Min/Max des Nodes begrenzt (Standard −60…+15 dB) für manuelle
+            Eingabe – <code>msg.result.appliedDb</code>/<code>clamped</code> zeigen den gesetzten Wert),
+            String für <code>nickname</code>. Alternativ ein Objekt
+            <code>{command, value, channel, source, output}</code>.</dd>
+        <dt class="optional">channel <span class="property-type">number | "all"</span></dt>
+        <dd>Kanal 1–4; fehlt er (und ist im Node nichts gesetzt), gilt der Befehl für alle Kanäle.</dd>
+        <dt class="optional">source / output <span class="property-type">number</span></dt>
+        <dd>Für <code>matrixGain</code>/<code>matrixMute</code>: Quelle 1–4, Ausgang 1–4 (A–D).</dd>
+    </dl>
+    <h3>Befehle</h3>
+    <ul>
+        <li><code>power</code> / <code>standby</code></li>
+        <li><code>volumeUp</code> / <code>volumeDown</code> – Lautstärke-Taster: Gain um <i>Schritt</i> dB ändern
+            (payload egal). Bleibt im Bereich Min…Max (Standard −60…+15 dB), geht beim Herunterregeln nie auf −∞.
+            Ohne Kanal: alle Kanäle. Optional <code>msg.step</code>, <code>msg.min</code>, <code>msg.max</code>,
+            <code>msg.block</code> (<code>gain</code>/<code>output</code>/<code>input</code>).
+            <code>msg.result.changes</code> = <code>[{channel, fromDb, toDb, atLimit}]</code>.</li>
+        <li><code>gainStep</code> – wie oben, Schritt kommt aus <code>msg.payload</code> (z.B. <code>2</code> oder <code>-2</code>), z.B. für Drehgeber.</li>
+        <li><code>blink</code> – LED-Identifikation (true = start, false = stop)</li>
+        <li><code>mute</code>, <code>gain</code>, <code>polarity</code> – User-Block pro Kanal</li>
+        <li><code>outputMute</code>, <code>outputGain</code> – Ways (Ausgänge)</li>
+        <li><code>inputMute</code>, <code>inputGain</code> – Matrix-Eingang (Pre)</li>
+        <li><code>matrixGain</code>, <code>matrixMute</code> – Matrix-Kreuzpunkt</li>
+        <li><code>nickname</code>, <code>autoPowerDown</code>, <code>reboot</code></li>
+        <li><code>write</code> – Rohzugriff: <code>payload = {address, data}</code> (data als Hex-String/Buffer/Array)</li>
+    </ul>
+    <h3>Outputs</h3>
+    <p>Die Eingangs-Message mit <code>msg.result = {ok, command, value, ...}</code>. Nach jedem Befehl wird der Status
+       sofort neu gelesen, angeschlossene Status-Nodes melden die Änderung.</p>
+</script>
