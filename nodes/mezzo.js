@@ -2,6 +2,7 @@
 const { MezzoClient, DEFAULT_PORT } = require('../lib/mezzo-client');
 const map = require('../lib/mezzo-map');
 const { discover, probe } = require('../lib/mezzo-discover');
+const values = require('../lib/mezzo-values');
 
 const readOps = (defs) => defs.map(([, addr, size]) => ({ op: 'R', addr, size }));
 
@@ -271,4 +272,77 @@ module.exports = function (RED) {
         });
     }
     RED.nodes.registerType('mezzo-control', MezzoControlNode);
+
+    // ===================================================================== value node
+    // One value (e.g. User Gain CH2, input level CH1) – outputs it when it changes and writes
+    // msg.payload back to the device. Meant to sit right next to one dashboard widget:
+    //   widget output -> mezzo-value -> widget input
+    RED.httpAdmin.get('/mezzo/values', RED.auth.needsPermission('mezzo-amp.read'), (req, res) => res.json(values.catalog()));
+
+    function MezzoValueNode(config) {
+        RED.nodes.createNode(this, config);
+        const node = this;
+        const amp = RED.nodes.getNode(config.amp);
+        const def = values.BY_KEY[config.value];
+        if (!amp) { node.status({ fill: 'red', shape: 'ring', text: 'no amp configured' }); return; }
+        if (!def) { node.status({ fill: 'red', shape: 'ring', text: 'no value selected' }); return; }
+        amp.setMaxListeners(0);   // one listener per value node – dashboards use many
+
+        const opts = { channel: config.channel, source: config.source, output: config.output, floor: config.floor,
+            min: config.min === '' || config.min === undefined ? -60 : Number(config.min),
+            max: config.max === '' || config.max === undefined ? 15 : Number(config.max) };
+        const asText = config.format === 'text';
+        const where = def.scope === 'ch' ? ` CH${opts.channel || 1}`
+            : def.scope === 'mx' ? ` ${opts.source || 1}→${'ABCD'[(Number(opts.output) || 1) - 1]}` : '';
+        const topic = config.topic || def.key + (def.scope === 'ch' ? ':' + (opts.channel || 1)
+            : def.scope === 'mx' ? `:${opts.source || 1}:${opts.output || 1}` : '');
+        let last;           // JSON of the last sent value
+        let force = false;  // send next value even if unchanged (after a write, e.g. clamped input)
+
+        const emit = (obj, always) => {
+            let v;
+            try { v = values.extract(def, obj, opts); } catch (e) { return; }
+            if (v === undefined) return;
+            const k = JSON.stringify(v);
+            if (k === last && !always && !force) return;
+            last = k; force = false;
+            const txt = values.format(def, v);
+            node.status({ fill: amp.connected ? 'green' : 'red', shape: amp.connected ? 'dot' : 'ring', text: txt + where });
+            node.send({ topic, payload: asText ? txt : v, value: v, text: txt, unit: def.unit || (def.type === 'db' ? 'dB' : '') });
+        };
+        const onData = (obj) => emit(obj);
+        const onConn = (c) => { if (!c.connected) node.status({ fill: 'red', shape: 'ring', text: 'disconnected' }); };
+        amp.on(def.src, onData);
+        amp.on('connection', onConn);
+        node.status({ fill: 'grey', shape: 'ring', text: 'warte auf Daten' });
+        // already have data (redeploy of this node only)
+        const current = def.src === 'meters' ? amp.meters : amp.status;
+        if (current) setImmediate(() => emit(current));
+
+        node.on('input', async (msg, send, done) => {
+            const cur = () => (def.src === 'meters' ? amp.meters : amp.status);
+            if (msg.topic === 'refresh' || msg.payload === undefined) {
+                if (cur()) emit(cur(), true);
+                return done();
+            }
+            try {
+                const cmd = values.writeCommand(def, msg.payload, opts);
+                if (!cmd) return done();
+                force = true;   // always report the real device value back (clamped / rejected input)
+                await amp.command(cmd);
+                done();
+            } catch (e) {
+                force = false;
+                if (cur()) emit(cur(), true);   // reset the widget to the device value
+                node.status({ fill: 'red', shape: 'dot', text: e.message.slice(0, 40) });
+                done(e);
+            }
+        });
+
+        node.on('close', () => {
+            amp.removeListener(def.src, onData);
+            amp.removeListener('connection', onConn);
+        });
+    }
+    RED.nodes.registerType('mezzo-value', MezzoValueNode);
 };

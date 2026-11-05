@@ -55,6 +55,7 @@ Paketname: `node-red-contrib-powersoft-mezzo` · Getestet mit **Mezzo 324 A** (F
 - Warnung, wenn unter der IP plötzlich ein anderes Gerät antwortet (Seriennummer-Prüfung)
 - Statusausgabe nur bei Änderung, bei jedem Poll oder auf Anfrage
 - Sicherheitsgrenze +15 dB für alle Gains; einstellbarer Bereich (Standard −60…+15 dB)
+- **mezzo-value**: ein einzelner Wert pro Node (lesen + schreiben) – Dashboard-Widgets direkt anschließen
 - Fertiges Dashboard (FlowFuse Dashboard 2) mit 5 Seiten
 
 ---
@@ -234,6 +235,36 @@ Alternativ als Objekt: `msg.payload = {command, value, channel, source, output, 
 
 Fehler werden als Node-Fehler gemeldet und können mit einem **catch**-Node abgefangen werden.
 
+### mezzo-value
+
+**Ein einzelner Wert** – lesen und schreiben. Ideal für Dashboards: jedes Widget bekommt seinen eigenen
+mezzo-value-Node, ohne Function-Nodes und ohne Verteilung über Topics.
+
+```
+[mezzo value: User Gain CH2] ──► [Dashboard-Eingabefeld] ──► zurück in denselben mezzo value
+```
+
+| Feld | Bedeutung | Standard |
+|---|---|---|
+| Verstärker | mezzo-amp-Konfiguration | – |
+| Wert | Auswahlliste (gruppiert): Gerät, Versorgung, Kanal, Matrix, Messwerte. ✎ = schreibbar | User Gain |
+| Kanal / Eingang → Ausgang | je nach Wert | 1 |
+| Ausgabe | **Wert** (Zahl/boolean – für Schalter, Eingabefeld, Gauge) oder **Text mit Einheit** (für Textanzeigen) | Wert |
+| Untergrenze | kleinere Werte und −∞ werden darauf gesetzt (z.B. −60 für Gauges) | keine |
+| Min / Max dB | Bereich beim Schreiben von Gains | −60 / +15 |
+
+**Ausgang** – nur bei Änderung (und beim Start): `msg.payload` (Wert oder Text), zusätzlich immer
+`msg.value`, `msg.text`, `msg.unit`; `msg.topic` z.B. `userGain:2`.
+
+**Eingang** – `msg.payload` schreibt den Wert (dB, boolean, Text). Danach gibt der Node immer den tatsächlichen
+Gerätewert aus; begrenzte oder abgelehnte Eingaben springen so im Widget auf den echten Wert zurück.
+`msg.topic = "refresh"` gibt den aktuellen Wert erneut aus.
+
+Verfügbare Werte: Power, Standby, Alarm, Fault, Nickname, Auto Power Down, IP, Modell, SN, Firmware ·
+Netzspannung, Temperaturen, Rails, Aux, Lüfterstrom · pro Kanal User/Output/Input Gain und Mute, Polarität,
+Delays, Way-Name, Kanaltemperatur, Kanal-Alarm · Matrix Route/Gain/Mute · Messwerte Eingang RMS/Peak,
+Ausgangsspannung/-strom, Leistung, Headroom, Limiter, Signal (Messwerte brauchen *Meter-Poll* > 0).
+
 ---
 
 ## Befehlsreferenz
@@ -376,7 +407,8 @@ erreichbar unter `http://<node-red>:1880/dashboard/mezzo`.
 | **Matrix** | 16 Kreuzpunkte mit Route ein/aus, Gain, Mute |
 | **Gerät & Alarme** | Geräteinfo, Nickname, Auto Power Down, Versorgung, Alarmtabellen |
 
-Popup-Meldungen bei Alarm, Verbindungsverlust, Standby-Wechsel, begrenzten Eingaben und Fehlern.
+Jedes Widget hängt an seinem eigenen mezzo-value-Node – übersichtliche Verdrahtung ohne Verteiler-Functions.
+Popup-Meldungen bei Alarm, Verbindungsverlust, Standby-Wechsel und Fehlern.
 Schalter zeigen immer den tatsächlichen Gerätezustand.
 
 ---

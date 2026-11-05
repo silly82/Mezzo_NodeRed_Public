@@ -377,3 +377,147 @@
     <p>Die Eingangs-Message mit <code>msg.result = {ok, command, value, ...}</code>. Nach jedem Befehl wird der Status
        sofort neu gelesen, angeschlossene Status-Nodes melden die Änderung.</p>
 </script>
+
+<!-- ===================================================================== mezzo-value -->
+<script type="text/javascript">
+(function () {
+    // catalog of selectable values (served by the runtime, see lib/mezzo-values.js)
+    let catalog = null;
+    const load = (cb) => {
+        if (catalog) return cb(catalog);
+        $.getJSON('mezzo/values', (c) => { catalog = c; cb(c); }).fail(() => cb([]));
+    };
+    load(() => RED.view && RED.view.redraw && RED.view.redraw(true));
+    const OUT = ['A', 'B', 'C', 'D'];
+
+    RED.nodes.registerType('mezzo-value', {
+        category: 'Powersoft',
+        color: '#E2D96E',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'mezzo-amp', required: true },
+            value: { value: 'userGain', required: true },
+            channel: { value: '1' },
+            source: { value: '1' },
+            output: { value: '1' },
+            format: { value: 'raw' },
+            floor: { value: '', validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            min: { value: -60, validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            max: { value: 15, validate: function (v) { return v === '' || (!isNaN(Number(v)) && Number(v) <= 15); } },
+            topic: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-exchange',
+        label: function () {
+            if (this.name) return this.name;
+            const d = (catalog || []).find(c => c.key === this.value);
+            const lbl = d ? d.label : this.value;
+            const sc = d ? d.scope : 'ch';
+            if (sc === 'ch') return lbl + ' CH' + (this.channel || 1);
+            if (sc === 'mx') return lbl + ' ' + (this.source || 1) + '→' + OUT[(Number(this.output) || 1) - 1];
+            return lbl;
+        },
+        paletteLabel: 'mezzo value',
+        oneditprepare: function () {
+            const node = this;
+            const sel = $('#node-input-value');
+            sel.on('change', function () {
+                const d = (catalog || []).find(x => x.key === sel.val()) || {};
+                $('.mezzo-v-ch').toggle(d.scope === 'ch');
+                $('.mezzo-v-mx').toggle(d.scope === 'mx');
+                $('.mezzo-v-range').toggle(!!d.writable && d.type === 'db');
+                $('.mezzo-v-floor').toggle(d.type === 'db' || d.type === 'num');
+                $('#mezzo-v-info').text((d.writable ? 'lesen + schreiben' : 'nur lesen') +
+                    (d.src === 'meters' ? ' · Messwert: im Config-Node Meter-Poll > 0 setzen' : '') +
+                    (d.unit ? ' · Einheit ' + d.unit : ''));
+            });
+            load(function (c) {
+                sel.empty();
+                const groups = {};
+                c.forEach(function (d) {
+                    if (!groups[d.group]) groups[d.group] = $('<optgroup>').attr('label', d.group).appendTo(sel);
+                    $('<option>').val(d.key).text(d.label + (d.writable ? '  ✎' : '')).appendTo(groups[d.group]);
+                });
+                sel.val(node.value);
+                sel.trigger('change');
+            });
+        }
+    });
+})();
+</script>
+
+<script type="text/html" data-template-name="mezzo-value">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="automatisch">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-list"></i> Wert</label>
+        <select id="node-input-value" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label></label><span id="mezzo-v-info" style="font-size:0.9em;color:#888"></span>
+    </div>
+    <div class="form-row mezzo-v-ch">
+        <label for="node-input-channel"><i class="fa fa-random"></i> Kanal</label>
+        <select id="node-input-channel" style="width:80px">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        </select>
+    </div>
+    <div class="form-row mezzo-v-mx">
+        <label for="node-input-source"><i class="fa fa-th"></i> Eingang → Ausg.</label>
+        <select id="node-input-source" style="width:80px">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        </select> →
+        <select id="node-input-output" style="width:80px">
+            <option value="1">A</option><option value="2">B</option><option value="3">C</option><option value="4">D</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-font"></i> Ausgabe</label>
+        <select id="node-input-format" style="width:70%">
+            <option value="raw">Wert (Zahl / boolean) – Schalter, Eingabefeld, Gauge, Chart</option>
+            <option value="text">Text mit Einheit – Textanzeige</option>
+        </select>
+    </div>
+    <div class="form-row mezzo-v-floor">
+        <label for="node-input-floor"><i class="fa fa-level-down"></i> Untergrenze</label>
+        <input type="text" id="node-input-floor" style="width:80px" placeholder="keine"> z.B. -60 für Gauges (−∞ → −60)
+    </div>
+    <div class="form-row mezzo-v-range">
+        <label for="node-input-min"><i class="fa fa-arrows-h"></i> Min / Max dB</label>
+        <input type="text" id="node-input-min" style="width:60px"> /
+        <input type="text" id="node-input-max" style="width:60px"> (beim Schreiben, max. +15)
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="automatisch, z.B. userGain:2">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="mezzo-value">
+    <p>Ein einzelner Wert eines Mezzo – lesen <b>und</b> schreiben. Gedacht als direkter Partner eines Dashboard-Widgets:</p>
+    <pre>[Widget] ⇄ [mezzo value]</pre>
+    <p>Widget-Ausgang an den Eingang, Ausgang zurück an das Widget. Keine Function-Nodes oder Topic-Verteilung nötig.</p>
+    <h3>Ausgang</h3>
+    <p>Bei jeder Änderung des Werts (und beim Start):</p>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number | boolean | string | null</span></dt>
+        <dd>Der Wert (Gains in dB, <code>null</code> = −∞) oder bei Ausgabe „Text“ der formatierte Text mit Einheit.</dd>
+        <dt>value / text / unit</dt><dd>immer beides: Rohwert und Text, dazu die Einheit.</dd>
+        <dt>topic</dt><dd>z.B. <code>userGain:2</code>, <code>matrixGain:1:3</code></dd>
+    </dl>
+    <h3>Eingang</h3>
+    <dl class="message-properties">
+        <dt>payload</dt>
+        <dd>Neuer Wert für schreibbare Werte (✎): dB-Zahl, boolean, Text (Nickname). Danach wird immer der tatsächliche
+            Gerätewert zurückgegeben – bei begrenzten oder abgelehnten Eingaben springt das Widget auf den echten Wert.</dd>
+        <dt>topic = <code>refresh</code></dt><dd>aktuellen Wert sofort erneut ausgeben</dd>
+    </dl>
+    <p>Messwerte brauchen im Config-Node einen <i>Meter-Poll</i> &gt; 0. Bei Dashboard-Widgets <i>Pass through</i> ausschalten.</p>
+</script>
