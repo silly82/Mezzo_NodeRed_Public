@@ -1,0 +1,543 @@
+<!-- Powersoft PBusX: Nota 142 (verifiziert), DC Rider (nach Powersoft-Spezifikation 1.0.3, ungetestet) – siehe docs/PBUSX.md -->
+<script type="text/javascript">
+(function () {
+    // fill a <select> with 1..n (+ optional extra options in front)
+    window.pbusxFillNumbers = function ($sel, n, extra, value) {
+        $sel.empty();
+        (extra || []).forEach(function (o) { $sel.append($('<option>').val(o[0]).text(o[1])); });
+        for (let i = 1; i <= n; i++) $sel.append($('<option>').val(String(i)).text(String(i)));
+        if (value !== undefined) $sel.val(String(value));
+    };
+})();
+</script>
+
+<!-- ===================================================================== pbusx-amp (config) -->
+<script type="text/javascript">
+    RED.nodes.registerType('pbusx-amp', {
+        category: 'config',
+        defaults: {
+            name: { value: '' },
+            host: { value: '', required: true },
+            port: { value: 8082, required: true, validate: RED.validators.number() },
+            model: { value: 'auto' },
+            mac: { value: '' },
+            pollInterval: { value: 2, required: true, validate: RED.validators.number() },
+            meterInterval: { value: 0, validate: RED.validators.number() },
+            timeout: { value: 1000, validate: RED.validators.number() },
+            serial: { value: '' },
+            modelName: { value: '' }
+        },
+        label: function () {
+            return this.name || ((this.modelName || 'Nota/DC Rider') + ' ' + this.host);
+        },
+        oneditprepare: function () {
+            const node = this;
+            const $sel = $('#pbusx-device');
+            const $host = $('#node-config-input-host');
+            const $info = $('#pbusx-device-info');
+            let found = [];
+
+            const describe = function (d) {
+                return d.modelName + (d.draft ? ' (Entwurf)' : '') + ' – ' + d.ip + ' (SN ' + d.serial + ')';
+            };
+            const showInfo = function (d, ok) {
+                if (!d) { $info.text(''); return; }
+                $info.html('<i class="fa ' + (ok ? 'fa-check" style="color:#3a3' : 'fa-info-circle') + '"></i> ' +
+                    RED.utils.sanitize(d.model + ', SN ' + d.serial + (d.firmware ? ', FW ' + d.firmware : '') +
+                    (d.mac ? ', MAC ' + d.mac : ', MAC unbekannt (Blink nicht möglich)') + (d.name ? ', Name "' + d.name + '"' : '')) +
+                    (d.draft ? ' <b style="color:#c60">Adresstabelle noch nicht am Gerät geprüft</b>' : ''));
+            };
+            const apply = function (d) {
+                $host.val(d.ip);
+                $('#node-config-input-serial').val(d.serial);
+                $('#node-config-input-modelName').val(d.modelName);
+                if (d.mac) $('#node-config-input-mac').val(d.mac);
+                if (!$('#node-config-input-name').val()) $('#node-config-input-name').val(d.name || d.modelName);
+            };
+            const fill = function () {
+                $sel.empty();
+                $sel.append($('<option>').val('').text(found.length ? '– Gerät auswählen (' + found.length + ' gefunden) –' : '– manuell (keine Geräte gefunden) –'));
+                found.forEach(function (d, i) { $sel.append($('<option>').val(String(i)).text(describe(d))); });
+                const idx = found.findIndex(function (d) { return (node.serial && d.serial === node.serial) || d.ip === $host.val(); });
+                if (idx >= 0) { $sel.val(String(idx)); showInfo(found[idx], true); if (found[idx].mac && !$('#node-config-input-mac').val()) $('#node-config-input-mac').val(found[idx].mac); }
+                if (node.serial && idx >= 0 && found[idx].ip !== $host.val()) {
+                    $info.append(' <b style="color:#c60">IP hat sich geändert: ' + RED.utils.sanitize(found[idx].ip) + '</b>');
+                }
+            };
+            const search = function () {
+                const $b = $('#pbusx-search').prop('disabled', true);
+                $b.find('i').addClass('fa-spin');
+                $.getJSON('pbusx/discover').done(function (list) { found = list || []; fill(); })
+                    .fail(function (x) { RED.notify('Suche fehlgeschlagen: ' + (x.responseJSON ? x.responseJSON.error : x.statusText), 'error'); })
+                    .always(function () { $b.prop('disabled', false); $b.find('i').removeClass('fa-spin'); });
+            };
+
+            $.getJSON('pbusx/models', function (models) {
+                const $m = $('#node-config-input-model').empty();
+                $m.append($('<option>').val('auto').text('automatisch (Modell + Kanalzahl vom Gerät)'));
+                models.forEach(function (m) {
+                    $m.append($('<option>').val(m.id).text(m.name + ' – ' + m.inputs + ' Eingänge / ' + m.outputs + ' Kanäle' + (m.verified ? '' : ' (Entwurf)')));
+                });
+                $m.val(node.model || 'auto');
+            });
+
+            $sel.on('change', function () {
+                const d = found[Number($(this).val())];
+                if ($(this).val() === '' || !d) { $('#node-config-input-serial').val(''); $('#node-config-input-modelName').val(''); showInfo(null); return; }
+                apply(d);
+                showInfo(d, true);
+            });
+            $host.on('input', function () {
+                const v = $(this).val().trim();
+                const idx = found.findIndex(function (d) { return d.ip === v; });
+                $sel.val(idx >= 0 ? String(idx) : '');
+                if (idx < 0) { $('#node-config-input-serial').val(''); $('#node-config-input-modelName').val(''); showInfo(null); }
+            });
+            $('#pbusx-search').on('click', function (e) { e.preventDefault(); search(); });
+            $('#pbusx-test').on('click', function (e) {
+                e.preventDefault();
+                const host = $host.val().trim();
+                if (!host) { RED.notify('Bitte zuerst eine IP eingeben', 'warning'); return; }
+                const $b = $(this).prop('disabled', true);
+                $info.html('<i class="fa fa-spinner fa-spin"></i> teste ' + RED.utils.sanitize(host) + ' …');
+                $.getJSON('pbusx/probe', { host: host, port: $('#node-config-input-port').val() })
+                    .done(function (d) {
+                        apply(d);
+                        showInfo(d, true);
+                        if (!found.some(function (x) { return x.ip === d.ip; })) { found.push(d); fill(); }
+                        RED.notify('Verbunden: ' + d.modelName + ' (SN ' + d.serial + ')', 'success');
+                    })
+                    .fail(function (x) {
+                        $info.html('<i class="fa fa-times" style="color:#c33"></i> ' + RED.utils.sanitize(x.responseJSON ? x.responseJSON.error : 'keine Antwort'));
+                    })
+                    .always(function () { $b.prop('disabled', false); });
+            });
+
+            $sel.append($('<option>').val('').text('– suche Nota / DC Rider … –'));
+            search();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="pbusx-amp">
+    <div class="form-row">
+        <label for="pbusx-device"><i class="fa fa-search"></i> Gerät</label>
+        <select id="pbusx-device" style="width:calc(70% - 50px)"></select>
+        <button id="pbusx-search" class="red-ui-button" title="Netzwerk nach Nota / DC Rider durchsuchen"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="fa fa-server"></i> IP-Adresse</label>
+        <input type="text" id="node-config-input-host" placeholder="192.168.1.60" style="width:calc(70% - 120px)">
+        <button id="pbusx-test" class="red-ui-button" title="Verbindung zu dieser IP testen"><i class="fa fa-plug"></i> Testen</button>
+    </div>
+    <div class="form-row">
+        <label></label>
+        <span id="pbusx-device-info" style="font-size:0.9em; display:inline-block; width:70%"></span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="z.B. Nota Kabine 1">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-model"><i class="fa fa-cube"></i> Modell</label>
+        <select id="node-config-input-model" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-modelName"><i class="fa fa-info"></i> Gefunden</label>
+        <input type="text" id="node-config-input-modelName" readonly style="width:160px">
+        <label for="node-config-input-serial" style="width:40px; margin-left:10px">SN</label>
+        <input type="text" id="node-config-input-serial" readonly style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-mac"><i class="fa fa-barcode"></i> MAC</label>
+        <input type="text" id="node-config-input-mac" placeholder="aus der Suche – nötig für Blink" style="width:200px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="fa fa-plug"></i> UDP Port</label>
+        <input type="number" id="node-config-input-port" style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-pollInterval"><i class="fa fa-clock-o"></i> Status-Poll (s)</label>
+        <input type="number" id="node-config-input-pollInterval" step="0.5" min="0.2" style="width:100px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-meterInterval"><i class="fa fa-bar-chart"></i> Meter-Poll (s)</label>
+        <input type="number" id="node-config-input-meterInterval" step="0.1" min="0" style="width:100px"> <span>0 = aus</span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-timeout"><i class="fa fa-hourglass"></i> Timeout (ms)</label>
+        <input type="number" id="node-config-input-timeout" style="width:100px">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pbusx-amp">
+    <p>Verbindung zu einem Powersoft <b>Nota 142</b> oder <b>DC Rider</b> über PBusX (UDP).</p>
+    <p><b>Achtung:</b> Die Adresstabelle des Nota 142 stammt aus Mitschnitten und ist am Gerät geprüft.
+       Der <b>DC Rider</b> folgt der Powersoft-Spezifikation 1.0.3 (FW 1.0.2.0), ist aber <b>noch nicht am Gerät getestet</b>
+       – vor dem Einsatz prüfen (siehe <code>docs/PBUSX.md</code>). Die Spezifikation nennt UDP-Port 8002, der Nota
+       meldet 8082; die Gerätesuche übernimmt den gemeldeten Port.</p>
+    <p><b>Gerät</b>: Beim Öffnen wird das Netzwerk per Broadcast (UDP 12345) durchsucht. Die Auswahl füllt IP,
+       Modell, Seriennummer und MAC aus. Die MAC wird beim Nota für <i>Blink</i> gebraucht (der DC Rider blinkt über PBusX).</p>
+    <p><b>IP-Adresse</b>: auch manuell möglich (z.B. anderes Subnetz). <i class="fa fa-plug"></i> Testen liest Modell
+       und Seriennummer direkt über PBusX.</p>
+    <p><b>Modell</b>: „automatisch“ erkennt das Modell und ermittelt die Zahl der Eingänge und Kanäle am Gerät
+       (fehlende Blöcke antworten mit NAK). Weicht ein gewähltes Modell davon ab, wird die erkannte Kanalzahl verwendet
+       und eine Warnung ausgegeben.</p>
+    <p>Gelesen werden u.a. Gerätename, User-/Way-Gain, Mute, Polarität, Delay, Way-Name, Matrix, Temperatur (%);
+       beim DC Rider zusätzlich Alarme (Gerät/Kanal/Eingang, z.B. Kurzschluss), Rails, Batterien, Temperatur °C,
+       Standby, Nickname und Eingangs-Gain. Meter optional mit eigenem Intervall.</p>
+</script>
+
+<!-- ===================================================================== pbusx-status -->
+<script type="text/javascript">
+    RED.nodes.registerType('pbusx-status', {
+        category: 'Powersoft',
+        color: '#C7E9C0',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'pbusx-amp', required: true },
+            mode: { value: 'change' },
+            meters: { value: false }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-tachometer',
+        label: function () { return this.name || 'Nota/DC Rider Status'; },
+        paletteLabel: 'pbusx status'
+    });
+</script>
+
+<script type="text/html" data-template-name="pbusx-status">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-mode"><i class="fa fa-filter"></i> Ausgabe</label>
+        <select id="node-input-mode">
+            <option value="change">bei Zustandsänderung</option>
+            <option value="always">bei jedem Poll</option>
+            <option value="manual">nur auf Input-Message</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-meters"><i class="fa fa-bar-chart"></i> Meter</label>
+        <input type="checkbox" id="node-input-meters" style="width:auto"> Meter-Werte ausgeben (Meter-Poll im Config-Node aktivieren)
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pbusx-status">
+    <p>Status und Messwerte eines Nota 142 / DC Rider (PBusX).</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>leer/<code>status</code>: Status sofort lesen. <code>meters</code>: Meter lesen.
+            <code>read</code> mit <code>payload = {address, size}</code>: Rohzugriff (lesen).</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload (status) <span class="property-type">object</span></dt>
+        <dd><code>info</code> (Modell, Seriennummer, <code>draft</code>), <code>layout</code> (<code>inputs</code>, <code>outputs</code>),
+            <code>name</code>, <code>state</code>, <code>statusCode</code>,
+            <code>alarms</code> (<code>any</code>, <code>machine</code> = {raw, flags}; DC Rider zusätzlich <code>output[]</code>/<code>input[]</code>),
+            <code>supply</code> (Nota: <code>temperaturePct</code>, <code>rail</code>, <code>aux</code>, <code>raw</code>;
+            DC Rider: <code>rails[4]</code>, <code>vbatt[2]</code>, <code>temperatureC</code>, <code>temperaturePct</code>),
+            DC Rider: <code>standby</code>, <code>nickname</code>, <code>callButton</code>, <code>input</code> (gainDb, mute),
+            <code>user</code> (gainDb, delay in s, shadingDb, polarityInverted, mute),
+            <code>output</code> (Ways: name, gainDb, delay, polarityInverted, mute),
+            <code>matrix</code> (<code>gainDb[eingang][kanal]</code>, <code>mute[eingang][kanal]</code>).
+            Gain in dB, <code>null</code> = −∞. Index 0 = Kanal/Eingang 1.</dd>
+        <dt>payload (meters) <span class="property-type">object</span></dt>
+        <dd><code>input</code> (peak/rms linear und dBFS, pro Matrix-Eingang), <code>output</code> (vPeak, vRms, headroom,
+            headroomDb; iPeak/iRms, signalPresence, limiterRaw sind nicht bestätigt).</dd>
+    </dl>
+</script>
+
+<!-- ===================================================================== pbusx-control -->
+<script type="text/javascript">
+    RED.nodes.registerType('pbusx-control', {
+        category: 'Powersoft',
+        color: '#C7E9C0',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'pbusx-amp', required: true },
+            command: { value: 'msg' },
+            channel: { value: '' },
+            source: { value: '' },
+            output: { value: '' },
+            step: { value: 1, validate: function (v) { return v === '' || (Number(v) > 0 && Number(v) <= 20); } },
+            min: { value: -60, validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            max: { value: 15, validate: function (v) { return v === '' || (!isNaN(Number(v)) && Number(v) <= 15); } },
+            block: { value: 'gain' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-sliders',
+        label: function () {
+            if (this.name) return this.name;
+            const ch = this.channel && this.channel !== 'all' ? ' CH' + this.channel : '';
+            if (this.command === 'volumeUp') return 'Lautstärke +' + (this.step || 1) + ' dB' + ch;
+            if (this.command === 'volumeDown') return 'Lautstärke −' + (this.step || 1) + ' dB' + ch;
+            if (this.command && this.command !== 'msg') return 'PBusX ' + this.command + ch;
+            return 'Nota/DC Rider Control';
+        },
+        paletteLabel: 'pbusx control',
+        oneditprepare: function () {
+            pbusxFillNumbers($('#node-input-channel'), 16, [['', 'aus msg / alle'], ['all', 'alle']], this.channel);
+            pbusxFillNumbers($('#node-input-source'), 16, [['', 'aus msg']], this.source);
+            pbusxFillNumbers($('#node-input-output'), 16, [['', 'aus msg']], this.output);
+            const upd = function () {
+                const c = $('#node-input-command').val();
+                const ch = ['mute', 'gain', 'delay', 'polarity', 'outputMute', 'outputGain', 'outputPolarity',
+                    'volumeUp', 'volumeDown', 'gainStep', 'msg'].indexOf(c) >= 0;
+                const mx = ['matrixGain', 'matrixMute', 'msg'].indexOf(c) >= 0;
+                const vol = ['volumeUp', 'volumeDown', 'gainStep', 'gain', 'outputGain', 'msg'].indexOf(c) >= 0;
+                const rel = ['volumeUp', 'volumeDown', 'msg'].indexOf(c) >= 0;
+                $('.pbusx-row-channel').toggle(ch);
+                $('.pbusx-row-matrix').toggle(mx);
+                $('.pbusx-row-volume').toggle(vol);
+                $('.pbusx-row-step').toggle(rel);
+                $('.pbusx-row-block').toggle(['volumeUp', 'volumeDown', 'gainStep', 'msg'].indexOf(c) >= 0);
+            };
+            $('#node-input-command').on('change', upd);
+            upd();
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="pbusx-control">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-command"><i class="fa fa-cog"></i> Befehl</label>
+        <select id="node-input-command">
+            <option value="msg">aus msg.topic</option>
+            <option value="blink">Blink / Identify</option>
+            <option value="volumeUp">Lautstärke + (Taster)</option>
+            <option value="volumeDown">Lautstärke − (Taster)</option>
+            <option value="gainStep">Lautstärke ± payload dB</option>
+            <option value="gain">Gain dB (User)</option>
+            <option value="mute">Mute (User)</option>
+            <option value="polarity">Polarität invertieren (User)</option>
+            <option value="delay">Delay ms (User, 0–100)</option>
+            <option value="outputGain">Way Gain dB</option>
+            <option value="outputMute">Way Mute</option>
+            <option value="outputPolarity">Way Polarität</option>
+            <option value="matrixGain">Matrix Kreuzpunkt Gain dB</option>
+            <option value="matrixMute">Matrix Kreuzpunkt Mute</option>
+            <option value="standby">Standby (DC Rider)</option>
+            <option value="power">Power ein/aus (DC Rider)</option>
+            <option value="inputGain">Eingang Gain dB (DC Rider)</option>
+            <option value="inputMute">Eingang Mute (DC Rider)</option>
+            <option value="nickname">Nickname (DC Rider)</option>
+            <option value="reboot">Reboot (DC Rider, payload "reboot")</option>
+            <option value="write">Raw Write</option>
+        </select>
+    </div>
+    <div class="form-row pbusx-row-channel">
+        <label for="node-input-channel"><i class="fa fa-random"></i> Kanal</label>
+        <select id="node-input-channel" style="width:140px"></select>
+    </div>
+    <div class="form-row pbusx-row-volume pbusx-row-block">
+        <label for="node-input-block"><i class="fa fa-volume-up"></i> Gain-Block</label>
+        <select id="node-input-block" style="width:200px">
+            <option value="gain">User Gain (empfohlen)</option>
+            <option value="output">Way Gain</option>
+        </select>
+    </div>
+    <div class="form-row pbusx-row-volume">
+        <label for="node-input-step" class="pbusx-row-step"><i class="fa fa-arrows-v"></i> Schritt dB</label>
+        <input type="number" id="node-input-step" step="0.5" min="0.1" style="width:70px" class="pbusx-row-step">
+        <label for="node-input-min" style="width:40px; margin-left:10px">Min</label>
+        <input type="number" id="node-input-min" step="1" style="width:70px">
+        <label for="node-input-max" style="width:40px; margin-left:10px">Max</label>
+        <input type="number" id="node-input-max" step="1" max="15" style="width:70px">
+    </div>
+    <div class="form-row pbusx-row-matrix">
+        <label for="node-input-source"><i class="fa fa-sign-in"></i> Eingang</label>
+        <select id="node-input-source" style="width:110px"></select>
+        <label for="node-input-output" style="margin-left:20px; width:60px">Kanal</label>
+        <select id="node-input-output" style="width:110px"></select>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pbusx-control">
+    <p>Steuert einen Nota 142 / DC Rider (PBusX). Der Wert kommt aus <code>msg.payload</code>.
+       Der DC Rider ist nach Spezifikation umgesetzt, aber noch nicht am Gerät getestet.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Befehl, wenn im Node „aus msg.topic“ gewählt ist (alternativ <code>msg.command</code>).</dd>
+        <dt>payload <span class="property-type">boolean | number | object</span></dt>
+        <dd>boolean für Schalter, dB für Gains (<code>null</code>/<code>"off"</code> = −∞, max. +15 dB, begrenzt auf Min/Max),
+            ms für <code>delay</code>. Alternativ ein Objekt <code>{command, value, channel, source, output}</code>.</dd>
+        <dt class="optional">channel <span class="property-type">number | "all"</span></dt>
+        <dd>Kanal 1…n (n = am Gerät erkannt); ohne Angabe gilt der Befehl für alle Kanäle.</dd>
+        <dt class="optional">source / output <span class="property-type">number</span></dt>
+        <dd>Für <code>matrixGain</code>/<code>matrixMute</code>: Matrix-Eingang 1…n → Kanal 1…n.</dd>
+    </dl>
+    <h3>Befehle</h3>
+    <ul>
+        <li><code>blink</code> – LED-Identifikation (true = start, false = stop). Nota: über das Suchprotokoll,
+            braucht die MAC im Config-Node, blinkt einige Male. DC Rider: über PBusX, blinkt 10 s.</li>
+        <li><code>volumeUp</code> / <code>volumeDown</code> / <code>gainStep</code> – Lautstärke relativ (User oder Way Gain)</li>
+        <li><code>gain</code>, <code>mute</code>, <code>polarity</code>, <code>delay</code> – User-Block pro Kanal</li>
+        <li><code>outputGain</code>, <code>outputMute</code>, <code>outputPolarity</code> – Ways (Polarität/Mute: Zuordnung wahrscheinlich, nicht einzeln bestätigt)</li>
+        <li><code>matrixGain</code>, <code>matrixMute</code> – Matrix-Kreuzpunkt</li>
+        <li><code>write</code> – Rohzugriff: <code>payload = {address, data}</code></li>
+    </ul>
+    <h3>Nur DC Rider</h3>
+    <ul>
+        <li><code>standby</code> (true = Standby) bzw. <code>power</code> (true = ein)</li>
+        <li><code>inputGain</code>, <code>inputMute</code> – Eingang vor der Matrix (<code>source</code> oder <code>channel</code> = Eingang)</li>
+        <li><code>nickname</code> – Text, max. 19 Zeichen</li>
+        <li><code>reboot</code> – nur mit <code>payload = "reboot"</code></li>
+    </ul>
+    <p>Beim Nota sind diese Befehle nicht verfügbar (Fehlermeldung); die Adressen sind dort unbekannt.</p>
+</script>
+
+<!-- ===================================================================== pbusx-value -->
+<script type="text/javascript">
+(function () {
+    let catalog = null;
+    const load = (cb) => {
+        if (catalog) return cb(catalog);
+        $.getJSON('pbusx/values', (c) => { catalog = c; cb(c); }).fail(() => cb([]));
+    };
+    load(() => RED.view && RED.view.redraw && RED.view.redraw(true));
+
+    RED.nodes.registerType('pbusx-value', {
+        category: 'Powersoft',
+        color: '#C7E9C0',
+        defaults: {
+            name: { value: '' },
+            amp: { value: '', type: 'pbusx-amp', required: true },
+            value: { value: 'userGain', required: true },
+            channel: { value: '1' },
+            source: { value: '1' },
+            output: { value: '1' },
+            format: { value: 'raw' },
+            floor: { value: '', validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            min: { value: -60, validate: function (v) { return v === '' || !isNaN(Number(v)); } },
+            max: { value: 15, validate: function (v) { return v === '' || (!isNaN(Number(v)) && Number(v) <= 15); } },
+            topic: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-exchange',
+        label: function () {
+            if (this.name) return this.name;
+            const d = (catalog || []).find(c => c.key === this.value);
+            const lbl = d ? d.label : this.value;
+            const sc = d ? d.scope : 'ch';
+            if (sc === 'ch') return lbl + ' CH' + (this.channel || 1);
+            if (sc === 'mx') return lbl + ' IN' + (this.source || 1) + '→' + (this.output || 1);
+            return lbl;
+        },
+        paletteLabel: 'pbusx value',
+        oneditprepare: function () {
+            const node = this;
+            pbusxFillNumbers($('#node-input-channel'), 16, [], node.channel || '1');
+            pbusxFillNumbers($('#node-input-source'), 16, [], node.source || '1');
+            pbusxFillNumbers($('#node-input-output'), 16, [], node.output || '1');
+            const sel = $('#node-input-value');
+            sel.on('change', function () {
+                const d = (catalog || []).find(x => x.key === sel.val()) || {};
+                $('.pbusx-v-ch').toggle(d.scope === 'ch');
+                $('.pbusx-v-mx').toggle(d.scope === 'mx');
+                $('.pbusx-v-range').toggle(!!d.writable && d.type === 'db');
+                $('.pbusx-v-floor').toggle(d.type === 'db' || d.type === 'num');
+                $('#pbusx-v-info').text((d.writable ? 'lesen + schreiben' : 'nur lesen') +
+                    (d.src === 'meters' ? ' · Messwert: im Config-Node Meter-Poll > 0 setzen' : '') +
+                    (d.unit ? ' · Einheit ' + d.unit : '') +
+                    (/\(\?\)/.test(d.label || '') ? ' · Bedeutung nicht bestätigt' : ''));
+            });
+            load(function (c) {
+                sel.empty();
+                const groups = {};
+                c.forEach(function (d) {
+                    if (!groups[d.group]) groups[d.group] = $('<optgroup>').attr('label', d.group).appendTo(sel);
+                    $('<option>').val(d.key).text(d.label + (d.writable ? '  ✎' : '')).appendTo(groups[d.group]);
+                });
+                sel.val(node.value);
+                sel.trigger('change');
+            });
+        }
+    });
+})();
+</script>
+
+<script type="text/html" data-template-name="pbusx-value">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="automatisch">
+    </div>
+    <div class="form-row">
+        <label for="node-input-amp"><i class="fa fa-server"></i> Verstärker</label>
+        <input type="text" id="node-input-amp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-list"></i> Wert</label>
+        <select id="node-input-value" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label></label><span id="pbusx-v-info" style="font-size:0.9em;color:#888"></span>
+    </div>
+    <div class="form-row pbusx-v-ch">
+        <label for="node-input-channel"><i class="fa fa-random"></i> Kanal</label>
+        <select id="node-input-channel" style="width:80px"></select>
+    </div>
+    <div class="form-row pbusx-v-mx">
+        <label for="node-input-source"><i class="fa fa-th"></i> Eingang → Kanal</label>
+        <select id="node-input-source" style="width:80px"></select> →
+        <select id="node-input-output" style="width:80px"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-format"><i class="fa fa-font"></i> Ausgabe</label>
+        <select id="node-input-format" style="width:70%">
+            <option value="raw">Wert (Zahl / boolean) – Schalter, Eingabefeld, Gauge, Chart</option>
+            <option value="text">Text mit Einheit – Textanzeige</option>
+        </select>
+    </div>
+    <div class="form-row pbusx-v-floor">
+        <label for="node-input-floor"><i class="fa fa-level-down"></i> Untergrenze</label>
+        <input type="text" id="node-input-floor" style="width:80px" placeholder="keine"> z.B. -60 für Gauges (−∞ → −60)
+    </div>
+    <div class="form-row pbusx-v-range">
+        <label for="node-input-min"><i class="fa fa-arrows-h"></i> Min / Max dB</label>
+        <input type="text" id="node-input-min" style="width:60px"> /
+        <input type="text" id="node-input-max" style="width:60px"> (beim Schreiben, max. +15)
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="automatisch, z.B. userGain:2">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pbusx-value">
+    <p>Ein einzelner Wert eines Nota 142 / DC Rider – lesen <b>und</b> schreiben, als direkter Partner eines Dashboard-Widgets:</p>
+    <pre>[Widget] ⇄ [pbusx value]</pre>
+    <p>Funktioniert wie <code>mezzo value</code>. Werte mit „(?)“ sind aus Mitschnitten abgeleitet, aber nicht bestätigt.
+       Bei Eingangsmetern ist „Kanal“ die Nummer des Matrix-Eingangs.</p>
+    <h3>Ausgang</h3>
+    <dl class="message-properties">
+        <dt>payload</dt><dd>Wert (Gains in dB, <code>null</code> = −∞) oder Text mit Einheit.</dd>
+        <dt>value / text / unit</dt><dd>Rohwert, Text und Einheit.</dd>
+        <dt>topic</dt><dd>z.B. <code>userGain:2</code>, <code>matrixGain:1:2</code></dd>
+    </dl>
+    <h3>Eingang</h3>
+    <dl class="message-properties">
+        <dt>payload</dt><dd>Neuer Wert für schreibbare Werte (✎). Danach wird der echte Gerätewert zurückgegeben.</dd>
+        <dt>topic = <code>refresh</code></dt><dd>aktuellen Wert sofort erneut ausgeben</dd>
+    </dl>
+</script>

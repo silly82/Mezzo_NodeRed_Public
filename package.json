@@ -7,6 +7,9 @@
     "node-red",
     "powersoft",
     "mezzo",
+    "nota",
+    "dc-rider",
+    "pbusx",
     "amplifier",
     "verstaerker",
     "audio",
@@ -28,7 +31,8 @@
   "node-red": {
     "version": ">=2.0.0",
     "nodes": {
-      "mezzo": "nodes/mezzo.js"
+      "mezzo": "nodes/mezzo.js",
+      "pbusx": "nodes/pbusx.js"
     }
   },
   "files": [

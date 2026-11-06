@@ -8,10 +8,11 @@ Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
 
 **Getestet mit:** Powersoft **Mezzo 324 A** (Firmware 1.6.1.24), Node-RED 4.x, FlowFuse Dashboard 1.35.
 
-> **Ausblick Nota 142 / DC Rider:** Eine Unterstützung für Nota 142 und DC Rider 408 / 8016 (Protokoll PBusX)
-> ist in Arbeit. Der **Nota 142** ist am Gerät getestet (Firmware 1.2.4.0: Gerätesuche, Status, Meter,
-> Lautstärke/Mute/Polarität/Delay, Matrix, Blink, Dashboard in Node-RED 4.1). Der **DC Rider** muss noch an
-> einem Gerät getestet werden. Beides ist **noch nicht** in diesem Download enthalten.
+> **Vorschau Nota 142 / DC Rider:** Nodes für Nota 142 und DC Rider (Protokoll PBusX) sind enthalten –
+> siehe [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau). Der **Nota 142** ist am Gerät getestet
+> (Firmware 1.2.4.0), der **DC Rider** ist nach der Powersoft-Spezifikation umgesetzt, aber **noch nicht am Gerät
+> getestet**. Enthalten ab dem aktuellen Stand auf GitHub (`npm install github:silly82/Mezzo_NodeRed_Public`);
+> das Release 0.2.0 enthält die Vorschau noch nicht.
 
 > Dies ist der öffentliche Download-Stand (Plugin + Anleitung). Fragen und Fehlermeldungen bitte über
 > *Issues* in diesem Repository.
@@ -30,9 +31,10 @@ Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
 8. [Messwerte (Meter)](#messwerte-meter)
 9. [Beispiel-Flows](#beispiel-flows)
 10. [Dashboard](#dashboard)
-11. [Wichtige Hinweise](#wichtige-hinweise)
-12. [Fehlersuche](#fehlersuche)
-13. [Lizenz](#lizenz)
+11. [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau)
+12. [Wichtige Hinweise](#wichtige-hinweise)
+13. [Fehlersuche](#fehlersuche)
+14. [Lizenz](#lizenz)
 
 ---
 
@@ -74,8 +76,8 @@ Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
 |---|---|
 | Node.js | ≥ 14 |
 | Node-RED | ≥ 2.0 (getestet mit 4.x) |
-| Verstärker | Powersoft Mezzo (getestet: Mezzo 324 A) |
-| Netzwerk | UDP Port 8002 zum Verstärker erreichbar; für die Gerätesuche dasselbe Subnetz |
+| Verstärker | Powersoft Mezzo (getestet: Mezzo 324 A); Vorschau: Nota 142 (getestet), DC Rider (ungetestet) |
+| Netzwerk | Mezzo: UDP Port 8002; Nota / DC Rider: UDP 8082 und 12345 (Suche/Blink); für die Gerätesuche dasselbe Subnetz |
 | Dashboard (optional) | `@flowfuse/node-red-dashboard` ≥ 1.x |
 
 Das Plugin hat **keine npm-Abhängigkeiten**.
@@ -402,6 +404,7 @@ Nach dem Import im Config-Node **den Verstärker auswählen bzw. die IP anpassen
 | `mezzo-basic.json` | Minimalbeispiel: Status bei Änderung, Power, Blink, Mute CH1, Gain | – |
 | `mezzo-dashboard.json` | Ausführliches Dashboard „Mezzo Dashboard“ | Dashboard 2 |
 | `mezzo-trigger-demo.json` | Demo „Trigger → CH1 −15 dB“: beliebige Message (Inject, link-in „Trigger CH1 −15 dB“, MQTT …) setzt CH1 auf −15 dB, Rücksetzen auf 0 dB | – |
+| `nota-dashboard.json` | Dashboard „Nota“ für Nota 142 / DC Rider (Vorschau): Übersicht, Kanäle, Messwerte, Matrix | Dashboard 2 |
 
 ---
 
@@ -424,15 +427,38 @@ Schalter zeigen immer den tatsächlichen Gerätezustand.
 
 ---
 
+## Nota 142 / DC Rider (Vorschau)
+
+Für die Powersoft-Geräte mit dem Protokoll **PBusX** gibt es eine eigene Node-Familie mit demselben Aufbau wie
+die Mezzo-Nodes: **pbusx-amp** (Config), **pbusx-status**, **pbusx-control**, **pbusx-value** – ebenfalls in der
+Palettenkategorie **Powersoft**. Die Bedienung ist in der Node-Hilfe (Info-Seitenleiste) beschrieben.
+
+| Gerät | Stand |
+|---|---|
+| Nota 142 | am Gerät getestet (Firmware 1.2.4.0): Gerätesuche, Status, Meter, Lautstärke/Mute/Polarität/Delay, Matrix, Blink, Dashboard |
+| DC Rider | nach der Powersoft-Spezifikation umgesetzt, **noch nicht am Gerät getestet** – vor dem Einsatz prüfen |
+
+- **Gerätesuche** per Broadcast (UDP 12345), liefert auch die MAC (beim Nota für *Blink* nötig); Verbindungstest per IP.
+  Port: der Nota meldet UDP 8082, die DC-Rider-Spezifikation nennt 8002 – die Suche übernimmt den gemeldeten Port.
+- Die Zahl der Eingänge und Kanäle wird am Gerät ermittelt.
+- **Befehle**: `blink`, `gain`, `mute`, `polarity`, `delay` (ms), `outputGain`, `outputMute`, `outputPolarity`,
+  `matrixGain`, `matrixMute`, `volumeUp`/`volumeDown`/`gainStep`, `write`.
+  Nur DC Rider: `standby`/`power`, `inputGain`/`inputMute`, `nickname`, `reboot` (payload `"reboot"`).
+- **Status**: Gerätename, Temperatur, Rail-Spannung, User-/Way-Werte, Way-Name, Matrix, Geräte-Alarme;
+  DC Rider zusätzlich Kanal-Alarme (u.a. Kurzschluss), Rails, Batteriespannungen, Temperatur °C, Standby, Nickname.
+- **Meter**: Eingang Peak/RMS, Ausgangsspannung/-strom, Signal, Clip, Headroom.
+- **Dashboard**: `examples/nota-dashboard.json`, erreichbar unter `http://<node-red>:1880/dashboard/nota`.
+
+---
+
 ## Wichtige Hinweise
 
 - **Nur eine Steuerverbindung**: Der Mezzo akzeptiert nur einen Steuer-Client zur Zeit. Pro Verstärker nur
   **einen** mezzo-amp-Config-Node verwenden und Armonía Plus nicht gleichzeitig verbinden.
 - **Auto Turn On** wird von Firmware 1.6.1.24 nicht gelesen und ist deshalb nicht verfügbar.
-- **Andere Powersoft-Serien**: Dieser Download unterstützt nur den Mezzo. Für **Nota 142** und **DC Rider 408 /
-  8016** (Protokoll PBusX) ist eine Unterstützung in Arbeit: Nota 142 ist am Gerät getestet, der **DC Rider muss
-  noch getestet werden**. Beides ist noch nicht in diesem Download enthalten. X-Serie und Unica sprechen andere
-  Protokolle und werden nicht unterstützt.
+- **Andere Powersoft-Serien**: Die mezzo-Nodes sprechen nur das Mezzo-Protokoll. **Nota 142** und **DC Rider**
+  haben eigene Nodes (`pbusx-*`, Vorschau – DC Rider noch nicht am Gerät getestet). X-Serie und Unica sprechen
+  andere Protokolle und werden nicht unterstützt.
 - **Gerätesuche** funktioniert nur im selben Subnetz. In anderen Netzen die IP von Hand eintragen.
 - **Reboot** und **Raw Write** mit Bedacht einsetzen.
 - Verwendung auf eigene Verantwortung – vor allem bei angeschlossenen Lautsprechern Gains vorsichtig ändern.
