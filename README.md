@@ -1,7 +1,7 @@
-# Mezzo_NodeRed – Node-RED-Plugin für Powersoft Mezzo
+# Mezzo_NodeRed – Node-RED-Plugin für Powersoft-Verstärker
 
-Node-RED-Nodes zum **Steuern und Überwachen von Powersoft-Mezzo-Verstärkern** über das native
-Powersoft-Protokoll (UDP, Port 8002) – ohne Armonía, ohne Zusatzhardware.
+Node-RED-Nodes zum **Steuern und Überwachen von Powersoft-Verstärkern** über das native
+Powersoft-Protokoll (UDP) – ohne Armonía, ohne Zusatzhardware.
 
 Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
 ([Releases](https://github.com/silly82/Mezzo_NodeRed_Public/releases))
