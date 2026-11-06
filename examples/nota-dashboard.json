@@ -433,7 +433,7 @@
         "width": 3,
         "height": 1,
         "name": "",
-        "label": "Rail (?)",
+        "label": "Rail-Spannung",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -446,14 +446,108 @@
         "wires": []
     },
     {
-        "id": "nxd_btn_13",
-        "type": "ui-button",
+        "id": "nxd_val_14",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "nickname",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 160,
+        "y": 430,
+        "wires": [
+            [
+                "nxd_txt_13"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_13",
+        "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_main",
         "order": 5,
         "className": "",
         "x": 450,
         "y": 430,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Nickname",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_16",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "alarmText",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 160,
+        "y": 480,
+        "wires": [
+            [
+                "nxd_txt_15"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_15",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_main",
+        "order": 6,
+        "className": "",
+        "x": 450,
+        "y": 480,
+        "width": 9,
+        "height": 1,
+        "name": "",
+        "label": "Geräte-Alarme",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#c62828",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_btn_17",
+        "type": "ui-button",
+        "z": "nxd_tab",
+        "group": "nxd_g_main",
+        "order": 7,
+        "className": "",
+        "x": 450,
+        "y": 530,
         "name": "",
         "label": "Identify (Blink)",
         "width": 2,
@@ -485,14 +579,14 @@
         ]
     },
     {
-        "id": "nxd_btn_14",
+        "id": "nxd_btn_18",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main",
-        "order": 6,
+        "order": 8,
         "className": "",
         "x": 450,
-        "y": 480,
+        "y": 580,
         "name": "",
         "label": "ALLE −",
         "width": 1,
@@ -524,14 +618,14 @@
         ]
     },
     {
-        "id": "nxd_btn_15",
+        "id": "nxd_btn_19",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main",
-        "order": 7,
+        "order": 9,
         "className": "",
         "x": 450,
-        "y": 530,
+        "y": 630,
         "name": "",
         "label": "ALLE +",
         "width": 1,
@@ -563,14 +657,14 @@
         ]
     },
     {
-        "id": "nxd_btn_16",
+        "id": "nxd_btn_20",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main",
-        "order": 8,
+        "order": 10,
         "className": "",
         "x": 450,
-        "y": 580,
+        "y": 680,
         "name": "",
         "label": "Alle Mute AUS",
         "width": 2,
@@ -602,14 +696,14 @@
         ]
     },
     {
-        "id": "nxd_btn_17",
+        "id": "nxd_btn_21",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main",
-        "order": 9,
+        "order": 11,
         "className": "",
         "x": 450,
-        "y": 630,
+        "y": 730,
         "name": "",
         "label": "Alle 0 dB",
         "width": 2,
@@ -655,7 +749,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_19",
+        "id": "nxd_val_23",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -670,22 +764,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 680,
+        "y": 780,
         "wires": [
             [
-                "nxd_txt_18"
+                "nxd_txt_22"
             ]
         ]
     },
     {
-        "id": "nxd_txt_18",
+        "id": "nxd_txt_22",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 1,
         "className": "",
         "x": 450,
-        "y": 680,
+        "y": 780,
         "width": 3,
         "height": 1,
         "name": "",
@@ -702,7 +796,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_21",
+        "id": "nxd_val_25",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -717,22 +811,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 730,
+        "y": 830,
         "wires": [
             [
-                "nxd_num_20"
+                "nxd_num_24"
             ]
         ]
     },
     {
-        "id": "nxd_num_20",
+        "id": "nxd_num_24",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 2,
         "className": "",
         "x": 450,
-        "y": 730,
+        "y": 830,
         "name": "",
         "label": "Gain dB (-60…+15)",
         "width": 3,
@@ -755,19 +849,19 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_21"
+                "nxd_val_25"
             ]
         ]
     },
     {
-        "id": "nxd_btn_22",
+        "id": "nxd_btn_26",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 3,
         "className": "",
         "x": 450,
-        "y": 780,
+        "y": 880,
         "name": "",
         "label": "−",
         "width": 1,
@@ -799,14 +893,14 @@
         ]
     },
     {
-        "id": "nxd_btn_23",
+        "id": "nxd_btn_27",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 4,
         "className": "",
         "x": 450,
-        "y": 830,
+        "y": 930,
         "name": "",
         "label": "0 dB",
         "width": 1,
@@ -838,14 +932,14 @@
         ]
     },
     {
-        "id": "nxd_btn_24",
+        "id": "nxd_btn_28",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 5,
         "className": "",
         "x": 450,
-        "y": 880,
+        "y": 980,
         "name": "",
         "label": "+",
         "width": 1,
@@ -877,7 +971,7 @@
         ]
     },
     {
-        "id": "nxd_val_26",
+        "id": "nxd_val_30",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -892,22 +986,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 930,
+        "y": 1030,
         "wires": [
             [
-                "nxd_sw_25"
+                "nxd_sw_29"
             ]
         ]
     },
     {
-        "id": "nxd_sw_25",
+        "id": "nxd_sw_29",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 6,
         "className": "",
         "x": 450,
-        "y": 930,
+        "y": 1030,
         "name": "",
         "label": "Mute",
         "width": 3,
@@ -929,12 +1023,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_26"
+                "nxd_val_30"
             ]
         ]
     },
     {
-        "id": "nxd_val_28",
+        "id": "nxd_val_32",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -949,22 +1043,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 980,
+        "y": 1080,
         "wires": [
             [
-                "nxd_gauge_27"
+                "nxd_gauge_31"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_27",
+        "id": "nxd_gauge_31",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 7,
         "className": "",
         "x": 450,
-        "y": 980,
+        "y": 1080,
         "name": "",
         "value": "payload",
         "valueType": "msg",
@@ -1007,7 +1101,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_30",
+        "id": "nxd_val_34",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1022,22 +1116,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1030,
+        "y": 1130,
         "wires": [
             [
-                "nxd_txt_29"
+                "nxd_txt_33"
             ]
         ]
     },
     {
-        "id": "nxd_txt_29",
+        "id": "nxd_txt_33",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch1",
         "order": 8,
         "className": "",
         "x": 450,
-        "y": 1030,
+        "y": 1130,
         "width": 3,
         "height": 1,
         "name": "",
@@ -1048,6 +1142,53 @@
         "font": "",
         "fontSize": 16,
         "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_36",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "channelAlarm",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 160,
+        "y": 1180,
+        "wires": [
+            [
+                "nxd_txt_35"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_35",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_main_ch1",
+        "order": 9,
+        "className": "",
+        "x": 450,
+        "y": 1180,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Kanal-Alarme",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#c62828",
         "wrapText": false,
         "value": "payload",
         "valueType": "msg",
@@ -1068,7 +1209,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_32",
+        "id": "nxd_val_38",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1083,22 +1224,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1080,
+        "y": 1230,
         "wires": [
             [
-                "nxd_txt_31"
+                "nxd_txt_37"
             ]
         ]
     },
     {
-        "id": "nxd_txt_31",
+        "id": "nxd_txt_37",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 1,
         "className": "",
         "x": 450,
-        "y": 1080,
+        "y": 1230,
         "width": 3,
         "height": 1,
         "name": "",
@@ -1115,7 +1256,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_34",
+        "id": "nxd_val_40",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1130,22 +1271,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1130,
+        "y": 1280,
         "wires": [
             [
-                "nxd_num_33"
+                "nxd_num_39"
             ]
         ]
     },
     {
-        "id": "nxd_num_33",
+        "id": "nxd_num_39",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 2,
         "className": "",
         "x": 450,
-        "y": 1130,
+        "y": 1280,
         "name": "",
         "label": "Gain dB (-60…+15)",
         "width": 3,
@@ -1168,19 +1309,19 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_34"
+                "nxd_val_40"
             ]
         ]
     },
     {
-        "id": "nxd_btn_35",
+        "id": "nxd_btn_41",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 3,
         "className": "",
         "x": 450,
-        "y": 1180,
+        "y": 1330,
         "name": "",
         "label": "−",
         "width": 1,
@@ -1212,14 +1353,14 @@
         ]
     },
     {
-        "id": "nxd_btn_36",
+        "id": "nxd_btn_42",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 4,
         "className": "",
         "x": 450,
-        "y": 1230,
+        "y": 1380,
         "name": "",
         "label": "0 dB",
         "width": 1,
@@ -1251,14 +1392,14 @@
         ]
     },
     {
-        "id": "nxd_btn_37",
+        "id": "nxd_btn_43",
         "type": "ui-button",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 5,
         "className": "",
         "x": 450,
-        "y": 1280,
+        "y": 1430,
         "name": "",
         "label": "+",
         "width": 1,
@@ -1290,7 +1431,7 @@
         ]
     },
     {
-        "id": "nxd_val_39",
+        "id": "nxd_val_45",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1305,22 +1446,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1330,
+        "y": 1480,
         "wires": [
             [
-                "nxd_sw_38"
+                "nxd_sw_44"
             ]
         ]
     },
     {
-        "id": "nxd_sw_38",
+        "id": "nxd_sw_44",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 6,
         "className": "",
         "x": 450,
-        "y": 1330,
+        "y": 1480,
         "name": "",
         "label": "Mute",
         "width": 3,
@@ -1342,12 +1483,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_39"
+                "nxd_val_45"
             ]
         ]
     },
     {
-        "id": "nxd_val_41",
+        "id": "nxd_val_47",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1362,22 +1503,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1380,
+        "y": 1530,
         "wires": [
             [
-                "nxd_gauge_40"
+                "nxd_gauge_46"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_40",
+        "id": "nxd_gauge_46",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 7,
         "className": "",
         "x": 450,
-        "y": 1380,
+        "y": 1530,
         "name": "",
         "value": "payload",
         "valueType": "msg",
@@ -1420,7 +1561,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_43",
+        "id": "nxd_val_49",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1435,22 +1576,22 @@
         "max": 15,
         "topic": "",
         "x": 160,
-        "y": 1430,
+        "y": 1580,
         "wires": [
             [
-                "nxd_txt_42"
+                "nxd_txt_48"
             ]
         ]
     },
     {
-        "id": "nxd_txt_42",
+        "id": "nxd_txt_48",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_main_ch2",
         "order": 8,
         "className": "",
         "x": 450,
-        "y": 1430,
+        "y": 1580,
         "width": 3,
         "height": 1,
         "name": "",
@@ -1461,6 +1602,53 @@
         "font": "",
         "fontSize": 16,
         "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_51",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "channelAlarm",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 160,
+        "y": 1630,
+        "wires": [
+            [
+                "nxd_txt_50"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_50",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_main_ch2",
+        "order": 9,
+        "className": "",
+        "x": 450,
+        "y": 1630,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Kanal-Alarme",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#c62828",
         "wrapText": false,
         "value": "payload",
         "valueType": "msg",
@@ -1481,7 +1669,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_45",
+        "id": "nxd_val_53",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1499,12 +1687,12 @@
         "y": 230,
         "wires": [
             [
-                "nxd_txt_44"
+                "nxd_txt_52"
             ]
         ]
     },
     {
-        "id": "nxd_txt_44",
+        "id": "nxd_txt_52",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_ch1",
@@ -1528,7 +1716,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_47",
+        "id": "nxd_val_55",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -1546,236 +1734,6 @@
         "y": 280,
         "wires": [
             [
-                "nxd_num_46"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_num_46",
-        "type": "ui-number-input",
-        "z": "nxd_tab",
-        "group": "nxd_g_ch1",
-        "order": 2,
-        "className": "",
-        "x": 1050,
-        "y": 280,
-        "name": "",
-        "label": "User Gain dB",
-        "width": 3,
-        "height": 1,
-        "topic": "",
-        "topicType": "str",
-        "min": -60,
-        "max": 15,
-        "step": 0.5,
-        "tooltip": "Wert -60…15 dB eingeben, Enter",
-        "delay": 300,
-        "passthru": false,
-        "sendOnDelay": false,
-        "sendOnBlur": true,
-        "sendOnEnter": true,
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "spinner": "default",
-        "wires": [
-            [
-                "nxd_val_47"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_val_49",
-        "type": "pbusx-value",
-        "z": "nxd_tab",
-        "name": "",
-        "amp": "nxd_amp",
-        "value": "userMute",
-        "channel": "1",
-        "source": "1",
-        "output": "1",
-        "format": "raw",
-        "floor": "",
-        "min": -60,
-        "max": 15,
-        "topic": "",
-        "x": 760,
-        "y": 330,
-        "wires": [
-            [
-                "nxd_sw_48"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_sw_48",
-        "type": "ui-switch",
-        "z": "nxd_tab",
-        "group": "nxd_g_ch1",
-        "order": 3,
-        "className": "",
-        "x": 1050,
-        "y": 330,
-        "name": "",
-        "label": "User Mute",
-        "width": 3,
-        "height": 1,
-        "passthru": false,
-        "decouple": true,
-        "topic": "",
-        "topicType": "str",
-        "style": "",
-        "layout": "row-spread",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "",
-        "oncolor": "#c62828",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "",
-        "offcolor": "",
-        "wires": [
-            [
-                "nxd_val_49"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_val_51",
-        "type": "pbusx-value",
-        "z": "nxd_tab",
-        "name": "",
-        "amp": "nxd_amp",
-        "value": "polarity",
-        "channel": "1",
-        "source": "1",
-        "output": "1",
-        "format": "raw",
-        "floor": "",
-        "min": -60,
-        "max": 15,
-        "topic": "",
-        "x": 760,
-        "y": 380,
-        "wires": [
-            [
-                "nxd_sw_50"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_sw_50",
-        "type": "ui-switch",
-        "z": "nxd_tab",
-        "group": "nxd_g_ch1",
-        "order": 4,
-        "className": "",
-        "x": 1050,
-        "y": 380,
-        "name": "",
-        "label": "User Polarität invertiert",
-        "width": 3,
-        "height": 1,
-        "passthru": false,
-        "decouple": true,
-        "topic": "",
-        "topicType": "str",
-        "style": "",
-        "layout": "row-spread",
-        "clickableArea": "switch",
-        "onvalue": "true",
-        "onvalueType": "bool",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "false",
-        "offvalueType": "bool",
-        "officon": "",
-        "offcolor": "",
-        "wires": [
-            [
-                "nxd_val_51"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_val_53",
-        "type": "pbusx-value",
-        "z": "nxd_tab",
-        "name": "",
-        "amp": "nxd_amp",
-        "value": "userDelay",
-        "channel": "1",
-        "source": "1",
-        "output": "1",
-        "format": "raw",
-        "floor": "",
-        "min": -60,
-        "max": 15,
-        "topic": "",
-        "x": 760,
-        "y": 430,
-        "wires": [
-            [
-                "nxd_num_52"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_num_52",
-        "type": "ui-number-input",
-        "z": "nxd_tab",
-        "group": "nxd_g_ch1",
-        "order": 5,
-        "className": "",
-        "x": 1050,
-        "y": 430,
-        "name": "",
-        "label": "User Delay ms (0…100)",
-        "width": 3,
-        "height": 1,
-        "topic": "",
-        "topicType": "str",
-        "min": 0,
-        "max": 100,
-        "step": 0.1,
-        "tooltip": "Delay 0…100 ms, Enter",
-        "delay": 300,
-        "passthru": false,
-        "sendOnDelay": false,
-        "sendOnBlur": true,
-        "sendOnEnter": true,
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "spinner": "default",
-        "wires": [
-            [
-                "nxd_val_53"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_val_55",
-        "type": "pbusx-value",
-        "z": "nxd_tab",
-        "name": "",
-        "amp": "nxd_amp",
-        "value": "outputGain",
-        "channel": "1",
-        "source": "1",
-        "output": "1",
-        "format": "raw",
-        "floor": "",
-        "min": -60,
-        "max": 15,
-        "topic": "",
-        "x": 760,
-        "y": 480,
-        "wires": [
-            [
                 "nxd_num_54"
             ]
         ]
@@ -1785,12 +1743,12 @@
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_ch1",
-        "order": 6,
+        "order": 2,
         "className": "",
         "x": 1050,
-        "y": 480,
+        "y": 280,
         "name": "",
-        "label": "Way Gain dB",
+        "label": "User Gain dB",
         "width": 3,
         "height": 1,
         "topic": "",
@@ -1821,7 +1779,7 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "outputMute",
+        "value": "userMute",
         "channel": "1",
         "source": "1",
         "output": "1",
@@ -1831,7 +1789,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 530,
+        "y": 330,
         "wires": [
             [
                 "nxd_sw_56"
@@ -1843,12 +1801,12 @@
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_ch1",
-        "order": 7,
+        "order": 3,
         "className": "",
         "x": 1050,
-        "y": 530,
+        "y": 330,
         "name": "",
-        "label": "Way Mute",
+        "label": "User Mute",
         "width": 3,
         "height": 1,
         "passthru": false,
@@ -1878,7 +1836,7 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "outputPolarity",
+        "value": "polarity",
         "channel": "1",
         "source": "1",
         "output": "1",
@@ -1888,7 +1846,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 580,
+        "y": 380,
         "wires": [
             [
                 "nxd_sw_58"
@@ -1900,12 +1858,12 @@
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_ch1",
-        "order": 8,
+        "order": 4,
         "className": "",
         "x": 1050,
-        "y": 580,
+        "y": 380,
         "name": "",
-        "label": "Way Polarität invertiert",
+        "label": "User Polarität invertiert",
         "width": 3,
         "height": 1,
         "passthru": false,
@@ -1930,74 +1888,13 @@
         ]
     },
     {
-        "id": "nxd_g_ch2",
-        "type": "ui-group",
-        "name": "Kanal 2 / Way 2",
-        "page": "nxd_p_ch",
-        "width": 4,
-        "height": 1,
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
         "id": "nxd_val_61",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "wayName",
-        "channel": "2",
-        "source": "1",
-        "output": "1",
-        "format": "text",
-        "floor": "",
-        "min": -60,
-        "max": 15,
-        "topic": "",
-        "x": 760,
-        "y": 630,
-        "wires": [
-            [
-                "nxd_txt_60"
-            ]
-        ]
-    },
-    {
-        "id": "nxd_txt_60",
-        "type": "ui-text",
-        "z": "nxd_tab",
-        "group": "nxd_g_ch2",
-        "order": 1,
-        "className": "",
-        "x": 1050,
-        "y": 630,
-        "width": 3,
-        "height": 1,
-        "name": "",
-        "label": "Way-Name",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#1f2937",
-        "wrapText": false,
-        "value": "payload",
-        "valueType": "msg",
-        "wires": []
-    },
-    {
-        "id": "nxd_val_63",
-        "type": "pbusx-value",
-        "z": "nxd_tab",
-        "name": "",
-        "amp": "nxd_amp",
-        "value": "userGain",
-        "channel": "2",
+        "value": "userDelay",
+        "channel": "1",
         "source": "1",
         "output": "1",
         "format": "raw",
@@ -2006,7 +1903,65 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 680,
+        "y": 430,
+        "wires": [
+            [
+                "nxd_num_60"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_60",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_ch1",
+        "order": 5,
+        "className": "",
+        "x": 1050,
+        "y": 430,
+        "name": "",
+        "label": "User Delay ms (0…100)",
+        "width": 3,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": 0,
+        "max": 100,
+        "step": 0.1,
+        "tooltip": "Delay 0…100 ms, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_61"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_63",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "outputGain",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 480,
         "wires": [
             [
                 "nxd_num_62"
@@ -2017,13 +1972,13 @@
         "id": "nxd_num_62",
         "type": "ui-number-input",
         "z": "nxd_tab",
-        "group": "nxd_g_ch2",
-        "order": 2,
+        "group": "nxd_g_ch1",
+        "order": 6,
         "className": "",
         "x": 1050,
-        "y": 680,
+        "y": 480,
         "name": "",
-        "label": "User Gain dB",
+        "label": "Way Gain dB",
         "width": 3,
         "height": 1,
         "topic": "",
@@ -2054,8 +2009,8 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "userMute",
-        "channel": "2",
+        "value": "outputMute",
+        "channel": "1",
         "source": "1",
         "output": "1",
         "format": "raw",
@@ -2064,7 +2019,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 730,
+        "y": 530,
         "wires": [
             [
                 "nxd_sw_64"
@@ -2075,13 +2030,13 @@
         "id": "nxd_sw_64",
         "type": "ui-switch",
         "z": "nxd_tab",
-        "group": "nxd_g_ch2",
-        "order": 3,
+        "group": "nxd_g_ch1",
+        "order": 7,
         "className": "",
         "x": 1050,
-        "y": 730,
+        "y": 530,
         "name": "",
-        "label": "User Mute",
+        "label": "Way Mute",
         "width": 3,
         "height": 1,
         "passthru": false,
@@ -2111,8 +2066,8 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "polarity",
-        "channel": "2",
+        "value": "outputPolarity",
+        "channel": "1",
         "source": "1",
         "output": "1",
         "format": "raw",
@@ -2121,7 +2076,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 780,
+        "y": 580,
         "wires": [
             [
                 "nxd_sw_66"
@@ -2132,13 +2087,13 @@
         "id": "nxd_sw_66",
         "type": "ui-switch",
         "z": "nxd_tab",
-        "group": "nxd_g_ch2",
-        "order": 4,
+        "group": "nxd_g_ch1",
+        "order": 8,
         "className": "",
         "x": 1050,
-        "y": 780,
+        "y": 580,
         "name": "",
-        "label": "User Polarität invertiert",
+        "label": "Way Polarität invertiert",
         "width": 3,
         "height": 1,
         "passthru": false,
@@ -2163,62 +2118,65 @@
         ]
     },
     {
+        "id": "nxd_g_ch2",
+        "type": "ui-group",
+        "name": "Kanal 2 / Way 2",
+        "page": "nxd_p_ch",
+        "width": 4,
+        "height": 1,
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
         "id": "nxd_val_69",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "userDelay",
+        "value": "wayName",
         "channel": "2",
         "source": "1",
         "output": "1",
-        "format": "raw",
+        "format": "text",
         "floor": "",
         "min": -60,
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 830,
+        "y": 630,
         "wires": [
             [
-                "nxd_num_68"
+                "nxd_txt_68"
             ]
         ]
     },
     {
-        "id": "nxd_num_68",
-        "type": "ui-number-input",
+        "id": "nxd_txt_68",
+        "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_ch2",
-        "order": 5,
+        "order": 1,
         "className": "",
         "x": 1050,
-        "y": 830,
-        "name": "",
-        "label": "User Delay ms (0…100)",
+        "y": 630,
         "width": 3,
         "height": 1,
-        "topic": "",
-        "topicType": "str",
-        "min": 0,
-        "max": 100,
-        "step": 0.1,
-        "tooltip": "Delay 0…100 ms, Enter",
-        "delay": 300,
-        "passthru": false,
-        "sendOnDelay": false,
-        "sendOnBlur": true,
-        "sendOnEnter": true,
-        "clearable": false,
-        "icon": "",
-        "iconPosition": "left",
-        "iconInnerPosition": "inside",
-        "spinner": "default",
-        "wires": [
-            [
-                "nxd_val_69"
-            ]
-        ]
+        "name": "",
+        "label": "Way-Name",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
     },
     {
         "id": "nxd_val_71",
@@ -2226,7 +2184,7 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "outputGain",
+        "value": "userGain",
         "channel": "2",
         "source": "1",
         "output": "1",
@@ -2236,7 +2194,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 880,
+        "y": 680,
         "wires": [
             [
                 "nxd_num_70"
@@ -2248,12 +2206,12 @@
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_ch2",
-        "order": 6,
+        "order": 2,
         "className": "",
         "x": 1050,
-        "y": 880,
+        "y": 680,
         "name": "",
-        "label": "Way Gain dB",
+        "label": "User Gain dB",
         "width": 3,
         "height": 1,
         "topic": "",
@@ -2284,7 +2242,7 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
-        "value": "outputMute",
+        "value": "userMute",
         "channel": "2",
         "source": "1",
         "output": "1",
@@ -2294,7 +2252,7 @@
         "max": 15,
         "topic": "",
         "x": 760,
-        "y": 930,
+        "y": 730,
         "wires": [
             [
                 "nxd_sw_72"
@@ -2306,12 +2264,12 @@
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_ch2",
-        "order": 7,
+        "order": 3,
         "className": "",
         "x": 1050,
-        "y": 930,
+        "y": 730,
         "name": "",
-        "label": "Way Mute",
+        "label": "User Mute",
         "width": 3,
         "height": 1,
         "passthru": false,
@@ -2341,6 +2299,236 @@
         "z": "nxd_tab",
         "name": "",
         "amp": "nxd_amp",
+        "value": "polarity",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 780,
+        "wires": [
+            [
+                "nxd_sw_74"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_74",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_ch2",
+        "order": 4,
+        "className": "",
+        "x": 1050,
+        "y": 780,
+        "name": "",
+        "label": "User Polarität invertiert",
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_75"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_77",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "userDelay",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 830,
+        "wires": [
+            [
+                "nxd_num_76"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_76",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_ch2",
+        "order": 5,
+        "className": "",
+        "x": 1050,
+        "y": 830,
+        "name": "",
+        "label": "User Delay ms (0…100)",
+        "width": 3,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": 0,
+        "max": 100,
+        "step": 0.1,
+        "tooltip": "Delay 0…100 ms, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_77"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_79",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "outputGain",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 880,
+        "wires": [
+            [
+                "nxd_num_78"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_78",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_ch2",
+        "order": 6,
+        "className": "",
+        "x": 1050,
+        "y": 880,
+        "name": "",
+        "label": "Way Gain dB",
+        "width": 3,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": -60,
+        "max": 15,
+        "step": 0.5,
+        "tooltip": "Wert -60…15 dB eingeben, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_79"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_81",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "outputMute",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 930,
+        "wires": [
+            [
+                "nxd_sw_80"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_80",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_ch2",
+        "order": 7,
+        "className": "",
+        "x": 1050,
+        "y": 930,
+        "name": "",
+        "label": "Way Mute",
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "#c62828",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_81"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_83",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
         "value": "outputPolarity",
         "channel": "2",
         "source": "1",
@@ -2354,12 +2542,12 @@
         "y": 980,
         "wires": [
             [
-                "nxd_sw_74"
+                "nxd_sw_82"
             ]
         ]
     },
     {
-        "id": "nxd_sw_74",
+        "id": "nxd_sw_82",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_ch2",
@@ -2388,7 +2576,481 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_75"
+                "nxd_val_83"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_g_in",
+        "type": "ui-group",
+        "name": "Eingänge (vor der Matrix)",
+        "page": "nxd_p_ch",
+        "width": 4,
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "nxd_val_85",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputGain",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1030,
+        "wires": [
+            [
+                "nxd_num_84"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_84",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 1,
+        "className": "",
+        "x": 1050,
+        "y": 1030,
+        "name": "",
+        "label": "Eingang 1 Gain dB",
+        "width": 2,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": -60,
+        "max": 15,
+        "step": 0.5,
+        "tooltip": "Wert -60…15 dB eingeben, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_85"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_87",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputMute",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1080,
+        "wires": [
+            [
+                "nxd_sw_86"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_86",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 2,
+        "className": "",
+        "x": 1050,
+        "y": 1080,
+        "name": "",
+        "label": "Mute",
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "#c62828",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_87"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_89",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputGain",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1130,
+        "wires": [
+            [
+                "nxd_num_88"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_88",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 3,
+        "className": "",
+        "x": 1050,
+        "y": 1130,
+        "name": "",
+        "label": "Eingang 2 Gain dB",
+        "width": 2,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": -60,
+        "max": 15,
+        "step": 0.5,
+        "tooltip": "Wert -60…15 dB eingeben, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_89"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_91",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputMute",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1180,
+        "wires": [
+            [
+                "nxd_sw_90"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_90",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 4,
+        "className": "",
+        "x": 1050,
+        "y": 1180,
+        "name": "",
+        "label": "Mute",
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "#c62828",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_91"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_93",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputGain",
+        "channel": "3",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1230,
+        "wires": [
+            [
+                "nxd_num_92"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_92",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 5,
+        "className": "",
+        "x": 1050,
+        "y": 1230,
+        "name": "",
+        "label": "Eingang 3 Gain dB",
+        "width": 2,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": -60,
+        "max": 15,
+        "step": 0.5,
+        "tooltip": "Wert -60…15 dB eingeben, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_93"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_95",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputMute",
+        "channel": "3",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1280,
+        "wires": [
+            [
+                "nxd_sw_94"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_94",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 6,
+        "className": "",
+        "x": 1050,
+        "y": 1280,
+        "name": "",
+        "label": "Mute",
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "#c62828",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_95"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_97",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputGain",
+        "channel": "4",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1330,
+        "wires": [
+            [
+                "nxd_num_96"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_num_96",
+        "type": "ui-number-input",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 7,
+        "className": "",
+        "x": 1050,
+        "y": 1330,
+        "name": "",
+        "label": "Eingang 4 Gain dB",
+        "width": 2,
+        "height": 1,
+        "topic": "",
+        "topicType": "str",
+        "min": -60,
+        "max": 15,
+        "step": 0.5,
+        "tooltip": "Wert -60…15 dB eingeben, Enter",
+        "delay": 300,
+        "passthru": false,
+        "sendOnDelay": false,
+        "sendOnBlur": true,
+        "sendOnEnter": true,
+        "clearable": false,
+        "icon": "",
+        "iconPosition": "left",
+        "iconInnerPosition": "inside",
+        "spinner": "default",
+        "wires": [
+            [
+                "nxd_val_97"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_val_99",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "inputMute",
+        "channel": "4",
+        "source": "1",
+        "output": "1",
+        "format": "raw",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 760,
+        "y": 1380,
+        "wires": [
+            [
+                "nxd_sw_98"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_sw_98",
+        "type": "ui-switch",
+        "z": "nxd_tab",
+        "group": "nxd_g_in",
+        "order": 8,
+        "className": "",
+        "x": 1050,
+        "y": 1380,
+        "name": "",
+        "label": "Mute",
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "decouple": true,
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "layout": "row-spread",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "#c62828",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "wires": [
+            [
+                "nxd_val_99"
             ]
         ]
     },
@@ -2407,7 +3069,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_77",
+        "id": "nxd_val_101",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2425,12 +3087,12 @@
         "y": 230,
         "wires": [
             [
-                "nxd_gauge_76"
+                "nxd_gauge_100"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_76",
+        "id": "nxd_gauge_100",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2480,7 +3142,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_79",
+        "id": "nxd_val_103",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2498,12 +3160,12 @@
         "y": 280,
         "wires": [
             [
-                "nxd_gauge_78"
+                "nxd_gauge_102"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_78",
+        "id": "nxd_gauge_102",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2553,7 +3215,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_81",
+        "id": "nxd_val_105",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2571,12 +3233,12 @@
         "y": 330,
         "wires": [
             [
-                "nxd_gauge_80"
+                "nxd_gauge_104"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_80",
+        "id": "nxd_gauge_104",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2626,7 +3288,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_83",
+        "id": "nxd_val_107",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2644,12 +3306,12 @@
         "y": 380,
         "wires": [
             [
-                "nxd_gauge_82"
+                "nxd_gauge_106"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_82",
+        "id": "nxd_gauge_106",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2699,7 +3361,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_85",
+        "id": "nxd_val_109",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2717,12 +3379,12 @@
         "y": 430,
         "wires": [
             [
-                "nxd_txt_84"
+                "nxd_txt_108"
             ]
         ]
     },
     {
-        "id": "nxd_txt_84",
+        "id": "nxd_txt_108",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2746,7 +3408,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_87",
+        "id": "nxd_val_111",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2764,12 +3426,12 @@
         "y": 480,
         "wires": [
             [
-                "nxd_txt_86"
+                "nxd_txt_110"
             ]
         ]
     },
     {
-        "id": "nxd_txt_86",
+        "id": "nxd_txt_110",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2793,7 +3455,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_89",
+        "id": "nxd_val_113",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2811,12 +3473,12 @@
         "y": 530,
         "wires": [
             [
-                "nxd_txt_88"
+                "nxd_txt_112"
             ]
         ]
     },
     {
-        "id": "nxd_txt_88",
+        "id": "nxd_txt_112",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2840,7 +3502,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_91",
+        "id": "nxd_val_115",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2858,12 +3520,12 @@
         "y": 580,
         "wires": [
             [
-                "nxd_txt_90"
+                "nxd_txt_114"
             ]
         ]
     },
     {
-        "id": "nxd_txt_90",
+        "id": "nxd_txt_114",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m_in",
@@ -2901,7 +3563,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_93",
+        "id": "nxd_val_117",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2919,12 +3581,12 @@
         "y": 630,
         "wires": [
             [
-                "nxd_gauge_92"
+                "nxd_gauge_116"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_92",
+        "id": "nxd_gauge_116",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m1",
@@ -2974,7 +3636,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_95",
+        "id": "nxd_val_119",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -2992,12 +3654,12 @@
         "y": 680,
         "wires": [
             [
-                "nxd_gauge_94"
+                "nxd_gauge_118"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_94",
+        "id": "nxd_gauge_118",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m1",
@@ -3043,7 +3705,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_97",
+        "id": "nxd_val_121",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3061,12 +3723,12 @@
         "y": 730,
         "wires": [
             [
-                "nxd_txt_96"
+                "nxd_txt_120"
             ]
         ]
     },
     {
-        "id": "nxd_txt_96",
+        "id": "nxd_txt_120",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m1",
@@ -3090,7 +3752,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_99",
+        "id": "nxd_val_123",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3108,12 +3770,12 @@
         "y": 780,
         "wires": [
             [
-                "nxd_txt_98"
+                "nxd_txt_122"
             ]
         ]
     },
     {
-        "id": "nxd_txt_98",
+        "id": "nxd_txt_122",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m1",
@@ -3124,7 +3786,7 @@
         "width": 3,
         "height": 1,
         "name": "",
-        "label": "Strom RMS (?)",
+        "label": "Strom RMS",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -3137,7 +3799,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_101",
+        "id": "nxd_val_125",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3155,12 +3817,12 @@
         "y": 830,
         "wires": [
             [
-                "nxd_txt_100"
+                "nxd_txt_124"
             ]
         ]
     },
     {
-        "id": "nxd_txt_100",
+        "id": "nxd_txt_124",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m1",
@@ -3171,7 +3833,101 @@
         "width": 3,
         "height": 1,
         "name": "",
-        "label": "Signal (?)",
+        "label": "Signal",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_127",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "outputClip",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 1360,
+        "y": 880,
+        "wires": [
+            [
+                "nxd_txt_126"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_126",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_m1",
+        "order": 6,
+        "className": "",
+        "x": 1650,
+        "y": 880,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Clip",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_129",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "limiterTotal",
+        "channel": "1",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 1360,
+        "y": 930,
+        "wires": [
+            [
+                "nxd_txt_128"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_128",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_m1",
+        "order": 7,
+        "className": "",
+        "x": 1650,
+        "y": 930,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Limiter (Reduktion)",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -3198,7 +3954,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_103",
+        "id": "nxd_val_131",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3213,22 +3969,22 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 880,
+        "y": 980,
         "wires": [
             [
-                "nxd_gauge_102"
+                "nxd_gauge_130"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_102",
+        "id": "nxd_gauge_130",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m2",
         "order": 1,
         "className": "",
         "x": 1650,
-        "y": 880,
+        "y": 980,
         "name": "",
         "value": "payload",
         "valueType": "msg",
@@ -3271,7 +4027,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_105",
+        "id": "nxd_val_133",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3286,22 +4042,22 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 930,
+        "y": 1030,
         "wires": [
             [
-                "nxd_gauge_104"
+                "nxd_gauge_132"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_104",
+        "id": "nxd_gauge_132",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_m2",
         "order": 2,
         "className": "",
         "x": 1650,
-        "y": 930,
+        "y": 1030,
         "name": "",
         "value": "payload",
         "valueType": "msg",
@@ -3340,7 +4096,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_107",
+        "id": "nxd_val_135",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3355,22 +4111,22 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 980,
+        "y": 1080,
         "wires": [
             [
-                "nxd_txt_106"
+                "nxd_txt_134"
             ]
         ]
     },
     {
-        "id": "nxd_txt_106",
+        "id": "nxd_txt_134",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m2",
         "order": 3,
         "className": "",
         "x": 1650,
-        "y": 980,
+        "y": 1080,
         "width": 3,
         "height": 1,
         "name": "",
@@ -3387,7 +4143,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_109",
+        "id": "nxd_val_137",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3402,26 +4158,26 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 1030,
+        "y": 1130,
         "wires": [
             [
-                "nxd_txt_108"
+                "nxd_txt_136"
             ]
         ]
     },
     {
-        "id": "nxd_txt_108",
+        "id": "nxd_txt_136",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m2",
         "order": 4,
         "className": "",
         "x": 1650,
-        "y": 1030,
+        "y": 1130,
         "width": 3,
         "height": 1,
         "name": "",
-        "label": "Strom RMS (?)",
+        "label": "Strom RMS",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -3434,7 +4190,7 @@
         "wires": []
     },
     {
-        "id": "nxd_val_111",
+        "id": "nxd_val_139",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3449,26 +4205,120 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 1080,
+        "y": 1180,
         "wires": [
             [
-                "nxd_txt_110"
+                "nxd_txt_138"
             ]
         ]
     },
     {
-        "id": "nxd_txt_110",
+        "id": "nxd_txt_138",
         "type": "ui-text",
         "z": "nxd_tab",
         "group": "nxd_g_m2",
         "order": 5,
         "className": "",
         "x": 1650,
-        "y": 1080,
+        "y": 1180,
         "width": 3,
         "height": 1,
         "name": "",
-        "label": "Signal (?)",
+        "label": "Signal",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_141",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "outputClip",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 1360,
+        "y": 1230,
+        "wires": [
+            [
+                "nxd_txt_140"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_140",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_m2",
+        "order": 6,
+        "className": "",
+        "x": 1650,
+        "y": 1230,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Clip",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#1f2937",
+        "wrapText": false,
+        "value": "payload",
+        "valueType": "msg",
+        "wires": []
+    },
+    {
+        "id": "nxd_val_143",
+        "type": "pbusx-value",
+        "z": "nxd_tab",
+        "name": "",
+        "amp": "nxd_amp",
+        "value": "limiterTotal",
+        "channel": "2",
+        "source": "1",
+        "output": "1",
+        "format": "text",
+        "floor": "",
+        "min": -60,
+        "max": 15,
+        "topic": "",
+        "x": 1360,
+        "y": 1280,
+        "wires": [
+            [
+                "nxd_txt_142"
+            ]
+        ]
+    },
+    {
+        "id": "nxd_txt_142",
+        "type": "ui-text",
+        "z": "nxd_tab",
+        "group": "nxd_g_m2",
+        "order": 7,
+        "className": "",
+        "x": 1650,
+        "y": 1280,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Limiter (Reduktion)",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -3495,7 +4345,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_113",
+        "id": "nxd_val_145",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3510,22 +4360,22 @@
         "max": 15,
         "topic": "",
         "x": 1360,
-        "y": 1130,
+        "y": 1330,
         "wires": [
             [
-                "nxd_gauge_112"
+                "nxd_gauge_144"
             ]
         ]
     },
     {
-        "id": "nxd_gauge_112",
+        "id": "nxd_gauge_144",
         "type": "ui-gauge",
         "z": "nxd_tab",
         "group": "nxd_g_temp",
         "order": 1,
         "className": "",
         "x": 1650,
-        "y": 1130,
+        "y": 1330,
         "name": "",
         "value": "payload",
         "valueType": "msg",
@@ -3582,14 +4432,14 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_chart_114",
+        "id": "nxd_chart_146",
         "type": "ui-chart",
         "z": "nxd_tab",
         "group": "nxd_g_trend1",
         "order": 1,
         "className": "",
         "x": 1650,
-        "y": 1180,
+        "y": 1380,
         "name": "",
         "label": "Temperatur",
         "chartType": "line",
@@ -3656,14 +4506,14 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_chart_115",
+        "id": "nxd_chart_147",
         "type": "ui-chart",
         "z": "nxd_tab",
         "group": "nxd_g_trend2",
         "order": 1,
         "className": "",
         "x": 1650,
-        "y": 1230,
+        "y": 1430,
         "name": "",
         "label": "Ausgang Vrms",
         "chartType": "line",
@@ -3730,7 +4580,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_117",
+        "id": "nxd_val_149",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3748,12 +4598,12 @@
         "y": 230,
         "wires": [
             [
-                "nxd_sw_116"
+                "nxd_sw_148"
             ]
         ]
     },
     {
-        "id": "nxd_sw_116",
+        "id": "nxd_sw_148",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -3782,12 +4632,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_117"
+                "nxd_val_149"
             ]
         ]
     },
     {
-        "id": "nxd_val_119",
+        "id": "nxd_val_151",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3805,12 +4655,12 @@
         "y": 280,
         "wires": [
             [
-                "nxd_num_118"
+                "nxd_num_150"
             ]
         ]
     },
     {
-        "id": "nxd_num_118",
+        "id": "nxd_num_150",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -3840,12 +4690,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_119"
+                "nxd_val_151"
             ]
         ]
     },
     {
-        "id": "nxd_val_121",
+        "id": "nxd_val_153",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3863,12 +4713,12 @@
         "y": 330,
         "wires": [
             [
-                "nxd_sw_120"
+                "nxd_sw_152"
             ]
         ]
     },
     {
-        "id": "nxd_sw_120",
+        "id": "nxd_sw_152",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -3897,12 +4747,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_121"
+                "nxd_val_153"
             ]
         ]
     },
     {
-        "id": "nxd_val_123",
+        "id": "nxd_val_155",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3920,12 +4770,12 @@
         "y": 380,
         "wires": [
             [
-                "nxd_sw_122"
+                "nxd_sw_154"
             ]
         ]
     },
     {
-        "id": "nxd_sw_122",
+        "id": "nxd_sw_154",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -3954,12 +4804,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_123"
+                "nxd_val_155"
             ]
         ]
     },
     {
-        "id": "nxd_val_125",
+        "id": "nxd_val_157",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -3977,12 +4827,12 @@
         "y": 430,
         "wires": [
             [
-                "nxd_num_124"
+                "nxd_num_156"
             ]
         ]
     },
     {
-        "id": "nxd_num_124",
+        "id": "nxd_num_156",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4012,12 +4862,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_125"
+                "nxd_val_157"
             ]
         ]
     },
     {
-        "id": "nxd_val_127",
+        "id": "nxd_val_159",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4035,12 +4885,12 @@
         "y": 480,
         "wires": [
             [
-                "nxd_sw_126"
+                "nxd_sw_158"
             ]
         ]
     },
     {
-        "id": "nxd_sw_126",
+        "id": "nxd_sw_158",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4069,12 +4919,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_127"
+                "nxd_val_159"
             ]
         ]
     },
     {
-        "id": "nxd_val_129",
+        "id": "nxd_val_161",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4092,12 +4942,12 @@
         "y": 530,
         "wires": [
             [
-                "nxd_sw_128"
+                "nxd_sw_160"
             ]
         ]
     },
     {
-        "id": "nxd_sw_128",
+        "id": "nxd_sw_160",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4126,12 +4976,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_129"
+                "nxd_val_161"
             ]
         ]
     },
     {
-        "id": "nxd_val_131",
+        "id": "nxd_val_163",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4149,12 +4999,12 @@
         "y": 580,
         "wires": [
             [
-                "nxd_num_130"
+                "nxd_num_162"
             ]
         ]
     },
     {
-        "id": "nxd_num_130",
+        "id": "nxd_num_162",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4184,12 +5034,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_131"
+                "nxd_val_163"
             ]
         ]
     },
     {
-        "id": "nxd_val_133",
+        "id": "nxd_val_165",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4207,12 +5057,12 @@
         "y": 630,
         "wires": [
             [
-                "nxd_sw_132"
+                "nxd_sw_164"
             ]
         ]
     },
     {
-        "id": "nxd_sw_132",
+        "id": "nxd_sw_164",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4241,12 +5091,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_133"
+                "nxd_val_165"
             ]
         ]
     },
     {
-        "id": "nxd_val_135",
+        "id": "nxd_val_167",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4264,12 +5114,12 @@
         "y": 680,
         "wires": [
             [
-                "nxd_sw_134"
+                "nxd_sw_166"
             ]
         ]
     },
     {
-        "id": "nxd_sw_134",
+        "id": "nxd_sw_166",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4298,12 +5148,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_135"
+                "nxd_val_167"
             ]
         ]
     },
     {
-        "id": "nxd_val_137",
+        "id": "nxd_val_169",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4321,12 +5171,12 @@
         "y": 730,
         "wires": [
             [
-                "nxd_num_136"
+                "nxd_num_168"
             ]
         ]
     },
     {
-        "id": "nxd_num_136",
+        "id": "nxd_num_168",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4356,12 +5206,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_137"
+                "nxd_val_169"
             ]
         ]
     },
     {
-        "id": "nxd_val_139",
+        "id": "nxd_val_171",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4379,12 +5229,12 @@
         "y": 780,
         "wires": [
             [
-                "nxd_sw_138"
+                "nxd_sw_170"
             ]
         ]
     },
     {
-        "id": "nxd_sw_138",
+        "id": "nxd_sw_170",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_1",
@@ -4413,7 +5263,7 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_139"
+                "nxd_val_171"
             ]
         ]
     },
@@ -4432,7 +5282,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_val_141",
+        "id": "nxd_val_173",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4450,12 +5300,12 @@
         "y": 830,
         "wires": [
             [
-                "nxd_sw_140"
+                "nxd_sw_172"
             ]
         ]
     },
     {
-        "id": "nxd_sw_140",
+        "id": "nxd_sw_172",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4484,12 +5334,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_141"
+                "nxd_val_173"
             ]
         ]
     },
     {
-        "id": "nxd_val_143",
+        "id": "nxd_val_175",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4507,12 +5357,12 @@
         "y": 880,
         "wires": [
             [
-                "nxd_num_142"
+                "nxd_num_174"
             ]
         ]
     },
     {
-        "id": "nxd_num_142",
+        "id": "nxd_num_174",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4542,12 +5392,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_143"
+                "nxd_val_175"
             ]
         ]
     },
     {
-        "id": "nxd_val_145",
+        "id": "nxd_val_177",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4565,12 +5415,12 @@
         "y": 930,
         "wires": [
             [
-                "nxd_sw_144"
+                "nxd_sw_176"
             ]
         ]
     },
     {
-        "id": "nxd_sw_144",
+        "id": "nxd_sw_176",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4599,12 +5449,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_145"
+                "nxd_val_177"
             ]
         ]
     },
     {
-        "id": "nxd_val_147",
+        "id": "nxd_val_179",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4622,12 +5472,12 @@
         "y": 980,
         "wires": [
             [
-                "nxd_sw_146"
+                "nxd_sw_178"
             ]
         ]
     },
     {
-        "id": "nxd_sw_146",
+        "id": "nxd_sw_178",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4656,12 +5506,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_147"
+                "nxd_val_179"
             ]
         ]
     },
     {
-        "id": "nxd_val_149",
+        "id": "nxd_val_181",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4679,12 +5529,12 @@
         "y": 1030,
         "wires": [
             [
-                "nxd_num_148"
+                "nxd_num_180"
             ]
         ]
     },
     {
-        "id": "nxd_num_148",
+        "id": "nxd_num_180",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4714,12 +5564,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_149"
+                "nxd_val_181"
             ]
         ]
     },
     {
-        "id": "nxd_val_151",
+        "id": "nxd_val_183",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4737,12 +5587,12 @@
         "y": 1080,
         "wires": [
             [
-                "nxd_sw_150"
+                "nxd_sw_182"
             ]
         ]
     },
     {
-        "id": "nxd_sw_150",
+        "id": "nxd_sw_182",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4771,12 +5621,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_151"
+                "nxd_val_183"
             ]
         ]
     },
     {
-        "id": "nxd_val_153",
+        "id": "nxd_val_185",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4794,12 +5644,12 @@
         "y": 1130,
         "wires": [
             [
-                "nxd_sw_152"
+                "nxd_sw_184"
             ]
         ]
     },
     {
-        "id": "nxd_sw_152",
+        "id": "nxd_sw_184",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4828,12 +5678,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_153"
+                "nxd_val_185"
             ]
         ]
     },
     {
-        "id": "nxd_val_155",
+        "id": "nxd_val_187",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4851,12 +5701,12 @@
         "y": 1180,
         "wires": [
             [
-                "nxd_num_154"
+                "nxd_num_186"
             ]
         ]
     },
     {
-        "id": "nxd_num_154",
+        "id": "nxd_num_186",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4886,12 +5736,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_155"
+                "nxd_val_187"
             ]
         ]
     },
     {
-        "id": "nxd_val_157",
+        "id": "nxd_val_189",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4909,12 +5759,12 @@
         "y": 1230,
         "wires": [
             [
-                "nxd_sw_156"
+                "nxd_sw_188"
             ]
         ]
     },
     {
-        "id": "nxd_sw_156",
+        "id": "nxd_sw_188",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -4943,12 +5793,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_157"
+                "nxd_val_189"
             ]
         ]
     },
     {
-        "id": "nxd_val_159",
+        "id": "nxd_val_191",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -4966,12 +5816,12 @@
         "y": 1280,
         "wires": [
             [
-                "nxd_sw_158"
+                "nxd_sw_190"
             ]
         ]
     },
     {
-        "id": "nxd_sw_158",
+        "id": "nxd_sw_190",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -5000,12 +5850,12 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_159"
+                "nxd_val_191"
             ]
         ]
     },
     {
-        "id": "nxd_val_161",
+        "id": "nxd_val_193",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -5023,12 +5873,12 @@
         "y": 1330,
         "wires": [
             [
-                "nxd_num_160"
+                "nxd_num_192"
             ]
         ]
     },
     {
-        "id": "nxd_num_160",
+        "id": "nxd_num_192",
         "type": "ui-number-input",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -5058,12 +5908,12 @@
         "spinner": "default",
         "wires": [
             [
-                "nxd_val_161"
+                "nxd_val_193"
             ]
         ]
     },
     {
-        "id": "nxd_val_163",
+        "id": "nxd_val_195",
         "type": "pbusx-value",
         "z": "nxd_tab",
         "name": "",
@@ -5081,12 +5931,12 @@
         "y": 1380,
         "wires": [
             [
-                "nxd_sw_162"
+                "nxd_sw_194"
             ]
         ]
     },
     {
-        "id": "nxd_sw_162",
+        "id": "nxd_sw_194",
         "type": "ui-switch",
         "z": "nxd_tab",
         "group": "nxd_g_mx_2",
@@ -5115,7 +5965,7 @@
         "offcolor": "",
         "wires": [
             [
-                "nxd_val_163"
+                "nxd_val_195"
             ]
         ]
     },
@@ -5134,7 +5984,7 @@
         "groupType": "default"
     },
     {
-        "id": "nxd_tbl_164",
+        "id": "nxd_tbl_196",
         "type": "ui-table",
         "z": "nxd_tab",
         "group": "nxd_g_info",
@@ -5279,12 +6129,12 @@
         "z": "nxd_tab",
         "name": "Geräteinfo",
         "outputs": 1,
-        "func": "if (msg.topic !== \"status\") return null;\nconst s = msg.payload;\nconst rows = [\n    { Eigenschaft: \"Modell\", Wert: s.info.modelName + (s.info.draft ? \" (Entwurf)\" : \"\") },\n    { Eigenschaft: \"Seriennummer\", Wert: s.info.serial }, { Eigenschaft: \"Gerätename\", Wert: s.name },\n    { Eigenschaft: \"Eingänge / Kanäle\", Wert: s.layout.inputs + \" / \" + s.layout.outputs },\n    { Eigenschaft: \"Temperatur\", Wert: s.supply.temperaturePct + \" %\" },\n    { Eigenschaft: \"Rail (?)\", Wert: s.supply.rail + \" V\" }, { Eigenschaft: \"Aux (?)\", Wert: s.supply.aux + \" V\" },\n    { Eigenschaft: \"Status-Codes (?)\", Wert: s.state + \" / \" + s.statusCode }];\nconst k = JSON.stringify(rows.filter(r => !/Temperatur|Rail|Aux/.test(r.Eigenschaft)));\nconst t = Date.now();\nif (context.get(\"k\") === k && t - (context.get(\"t\") || 0) < 10000) return null;   // refresh analog values every 10 s\ncontext.set(\"k\", k); context.set(\"t\", t);\nreturn { payload: rows };",
+        "func": "if (msg.topic !== \"status\") return null;\nconst s = msg.payload;\nconst rows = [\n    { Eigenschaft: \"Modell\", Wert: s.info.modelName + (s.info.draft ? \" (Entwurf)\" : \"\") },\n    { Eigenschaft: \"Seriennummer\", Wert: s.info.serial }, { Eigenschaft: \"Gerätename\", Wert: s.name },\n    { Eigenschaft: \"Eingänge / Kanäle\", Wert: s.layout.inputs + \" / \" + s.layout.outputs },\n    { Eigenschaft: \"Temperatur\", Wert: s.supply.temperaturePct + \" %\" },\n    { Eigenschaft: \"Nickname\", Wert: s.nickname || \"–\" },\n    { Eigenschaft: \"Rail\", Wert: s.supply.rail + \" V\" }, { Eigenschaft: \"Aux (?)\", Wert: s.supply.aux + \" V\" },\n    { Eigenschaft: \"Geräte-Alarme\", Wert: (s.alarms.machine && s.alarms.machine.flags.length) ? s.alarms.machine.flags.join(\", \") : \"keine\" },\n    { Eigenschaft: \"Kanal-Alarme\", Wert: (s.alarms.output || []).map((o, i) => o && o.raw ? \"CH\" + (i + 1) + \": \" + o.flags.join(\", \") : null).filter(Boolean).join(\"; \") || \"keine\" }];\nconst k = JSON.stringify(rows.filter(r => !/Temperatur|Rail|Aux/.test(r.Eigenschaft)));\nconst t = Date.now();\nif (context.get(\"k\") === k && t - (context.get(\"t\") || 0) < 10000) return null;   // refresh analog values every 10 s\ncontext.set(\"k\", k); context.set(\"t\", t);\nreturn { payload: rows };",
         "x": 420,
         "y": 100,
         "wires": [
             [
-                "nxd_tbl_164"
+                "nxd_tbl_196"
             ]
         ]
     },
@@ -5299,10 +6149,10 @@
         "y": 140,
         "wires": [
             [
-                "nxd_chart_114"
+                "nxd_chart_146"
             ],
             [
-                "nxd_chart_115"
+                "nxd_chart_147"
             ]
         ]
     },
@@ -5312,7 +6162,7 @@
         "z": "nxd_tab",
         "name": "Verbindungs-/Status-Meldungen",
         "outputs": 1,
-        "func": "const prev = context.get(\"prev\") || {};\nlet txt = null, color = \"#0d74ce\";\nif (msg.topic === \"connection\") {\n    if (prev.connected !== undefined && prev.connected !== msg.payload.connected) {\n        txt = msg.payload.connected ? \"Verbindung zum Nota wiederhergestellt\" : \"Verbindung zum Nota verloren: \" + (msg.payload.error || \"\");\n        color = msg.payload.connected ? \"#2e7d32\" : \"#c62828\";\n    }\n    prev.connected = msg.payload.connected;\n} else if (msg.topic === \"status\") {\n    const a = msg.payload.alarms.any;\n    if (prev.any === false && a) { txt = \"Nota: Status \" + msg.payload.state + \"/\" + msg.payload.statusCode + \" (Bedeutung unbekannt)\"; color = \"#f9a825\"; }\n    if (prev.any === true && !a) { txt = \"Nota: Status wieder 0\"; color = \"#2e7d32\"; }\n    prev.any = a;\n}\ncontext.set(\"prev\", prev);\nif (!txt) return null;\nreturn { payload: txt, ui_update: { color } };",
+        "func": "const prev = context.get(\"prev\") || {};\nlet txt = null, color = \"#0d74ce\";\nif (msg.topic === \"connection\") {\n    if (prev.connected !== undefined && prev.connected !== msg.payload.connected) {\n        txt = msg.payload.connected ? \"Verbindung zum Nota wiederhergestellt\" : \"Verbindung zum Nota verloren: \" + (msg.payload.error || \"\");\n        color = msg.payload.connected ? \"#2e7d32\" : \"#c62828\";\n    }\n    prev.connected = msg.payload.connected;\n} else if (msg.topic === \"status\") {\n    const a = msg.payload.alarms.any;\n    const al = msg.payload.alarms;\n    const flags = [...((al.machine && al.machine.flags) || []), ...(al.output || []).flatMap((o, i) => o && o.raw ? o.flags.map(x => \"CH\" + (i + 1) + \" \" + x) : [])];\n    if (prev.any === false && a) { txt = \"Nota Alarm: \" + (flags.join(\", \") || (\"Status \" + msg.payload.state + \"/\" + msg.payload.statusCode)); color = \"#f9a825\"; }\n    if (prev.any === true && !a) { txt = \"Nota: keine Alarme mehr\"; color = \"#2e7d32\"; }\n    prev.any = a;\n}\ncontext.set(\"prev\", prev);\nif (!txt) return null;\nreturn { payload: txt, ui_update: { color } };",
         "x": 460,
         "y": 180,
         "wires": [
