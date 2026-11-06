@@ -418,8 +418,10 @@ Schalter zeigen immer den tatsächlichen Gerätezustand.
 - **Nur eine Steuerverbindung**: Der Mezzo akzeptiert nur einen Steuer-Client zur Zeit. Pro Verstärker nur
   **einen** mezzo-amp-Config-Node verwenden und Armonía Plus nicht gleichzeitig verbinden.
 - **Auto Turn On** wird von Firmware 1.6.1.24 nicht gelesen und ist deshalb nicht verfügbar.
-- **Nur Mezzo**: Andere Powersoft-Serien (z.B. Nota, X-Serie, Unica) sprechen andere Protokolle und werden
-  **nicht** unterstützt.
+- **Andere Powersoft-Serien**: Dieser Download unterstützt nur den Mezzo. Für **Nota 142** und **DC Rider 408 /
+  8016** (Protokoll PBusX) ist eine Unterstützung in Arbeit: Nota 142 ist am Gerät getestet, der **DC Rider muss
+  noch getestet werden**. Beides ist noch nicht in diesem Download enthalten. X-Serie und Unica sprechen andere
+  Protokolle und werden nicht unterstützt.
 - **Gerätesuche** funktioniert nur im selben Subnetz. In anderen Netzen die IP von Hand eintragen.
 - **Reboot** und **Raw Write** mit Bedacht einsetzen.
 - Verwendung auf eigene Verantwortung – vor allem bei angeschlossenen Lautsprechern Gains vorsichtig ändern.
