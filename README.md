@@ -31,10 +31,11 @@ Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
 8. [Messwerte (Meter)](#messwerte-meter)
 9. [Beispiel-Flows](#beispiel-flows)
 10. [Dashboard](#dashboard)
-11. [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau)
-12. [Wichtige Hinweise](#wichtige-hinweise)
-13. [Fehlersuche](#fehlersuche)
-14. [Lizenz](#lizenz)
+11. [Erweiterte Mezzo-Funktionen (ungetestet)](#erweiterte-mezzo-funktionen-ungetestet)
+12. [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau)
+13. [Wichtige Hinweise](#wichtige-hinweise)
+14. [Fehlersuche](#fehlersuche)
+15. [Lizenz](#lizenz)
 
 ---
 
@@ -424,6 +425,27 @@ erreichbar unter `http://<node-red>:1880/dashboard/mezzo`.
 Jedes Widget hängt an seinem eigenen mezzo-value-Node – übersichtliche Verdrahtung ohne Verteiler-Functions.
 Popup-Meldungen bei Alarm, Verbindungsverlust, Standby-Wechsel und Fehlern.
 Schalter zeigen immer den tatsächlichen Gerätezustand.
+
+---
+
+## Erweiterte Mezzo-Funktionen (ungetestet)
+
+Nach der Powersoft-Spezifikation 1.4.0 umgesetzt, aber **noch nicht an einem Mezzo getestet** – vor dem Einsatz
+prüfen, Werte zuerst klein wählen. Parameter als Objekt in `msg.payload` an einen mezzo-control-Node; die Werte
+stehen im Status unter `sources`, `pilotTone`, `loadMonitor`, `gpio` (`null`, wenn das Gerät den Bereich
+ablehnt) und im mezzo-value-Node.
+
+| Funktion | Befehle (Beispiele) | Status / Werte |
+|---|---|---|
+| **Quellenwahl / Backup** | `backupEnable`, `sourcePriority` {channel, value: [2,1,3,4]}, `sourceDefaultPriority`, `sourceId`, `backupThresholdMode`, `backupThreshold` | `sources`, Gruppe „Quellenwahl“ |
+| **Pilotton** | `pilotGenerator` {channel, enable, frequency, amplitude}, `pilotDetect` {channel, enable, frequency, low, high}, `pilotSource` {…, gpo} | `pilotTone` (`alarm`, `missing`), Gruppe „Pilotton“ |
+| **Lastüberwachung** | `loadMonitor` {channel, enable, frequency, low, high}, `loadSensibility` (0,01–10 Vrms, flüchtig) | `loadMonitor` (`impedance` Ω, `outOfRange`), Gruppe „Lastüberwachung“ |
+| **GPI / GPO** | `gpiMode` (gain/other), `relayMode` (automatic/manual), `relay` (true = geschlossen) | `gpio`, Gruppe „GPI/GPO“ |
+
+Beispiel Lautsprecherüberwachung:
+`{command: "loadMonitor", channel: 1, value: {enable: true, frequency: 20000, low: 4, high: 16}}`
+→ `loadOutOfRange` (mezzo-value) meldet eine Last ausserhalb 4–16 Ω. Die Impedanz wird laut Spezifikation mit
+Pilotton gemessen. Einheiten mancher Grenzwerte gibt die Spezifikation nicht an.
 
 ---
 

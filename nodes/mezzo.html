@@ -294,6 +294,14 @@
             <option value="nickname">Nickname</option>
             <option value="autoPowerDown">Auto Power Down</option>
             <option value="reboot">Reboot</option>
+            <option value="backupEnable">Backup-Quelle ein/aus (Spec, ungetestet)</option>
+            <option value="sourceDefaultPriority">Standard-Priorität Quelle 1–4 (Spec, ungetestet)</option>
+            <option value="pilotGenerator">Pilotton-Generator (Spec, ungetestet)</option>
+            <option value="pilotDetect">Pilotton-Erkennung Ausgang (Spec, ungetestet)</option>
+            <option value="loadMonitor">Lastüberwachung (Spec, ungetestet)</option>
+            <option value="relay">GPO-Relais manuell (Spec, ungetestet)</option>
+            <option value="relayMode">GPO-Relais Modus (Spec, ungetestet)</option>
+            <option value="gpiMode">GPI-Modus (Spec, ungetestet)</option>
             <option value="write">Raw Write</option>
         </select>
     </div>
@@ -373,6 +381,26 @@
         <li><code>nickname</code>, <code>autoPowerDown</code>, <code>reboot</code></li>
         <li><code>write</code> – Rohzugriff: <code>payload = {address, data}</code> (data als Hex-String/Buffer/Array)</li>
     </ul>
+    <h3>Erweiterte Funktionen (nach Spezifikation 1.4.0, noch nicht am Gerät getestet)</h3>
+    <p>Parameter als Objekt in <code>msg.payload</code>, z.B.
+       <code>{command: "loadMonitor", channel: 1, enable: true, frequency: 20000, low: 4, high: 16}</code>.</p>
+    <ul>
+        <li><b>Quellenwahl / Backup</b>: <code>sourceId</code> {channel, slot, value −1…31},
+            <code>sourcePriority</code> {channel, value: [Slot für Prio 1…4]}, <code>sourceDefaultPriority</code> (1–4),
+            <code>backupEnable</code>, <code>backupThresholdMode</code> (regular/threshold), <code>backupThreshold</code> {channel, slot, value dB}</li>
+        <li><b>Pilotton</b>: <code>pilotGenerator</code> {channel, enable, frequency, amplitude},
+            <code>pilotDetect</code> {channel, enable, frequency, low, high} (Ausgang),
+            <code>pilotSource</code> {channel, enable, frequency, low, high, gpo} (Eingang) sowie Einzelbefehle
+            (<code>pilotGeneratorEnable</code>, <code>pilotDetectLow</code> …). Amplitude-Einheit in der Spezifikation offen – vorsichtig testen.</li>
+        <li><b>Lastüberwachung</b>: <code>loadMonitor</code> {channel, enable, frequency, low, high, sensibility},
+            Einzelbefehle <code>loadMonitorEnable</code>, <code>loadMonitorLow</code>, <code>loadMonitorHigh</code>,
+            <code>loadMonitorFrequency</code>, <code>loadSensibility</code> (0,01–10 Vrms, geht beim Ausschalten verloren).
+            Die Impedanz wird laut Spezifikation mit Pilotton gemessen.</li>
+        <li><b>GPI / GPO</b>: <code>gpiMode</code> (gain/other), <code>relayMode</code> (automatic/manual),
+            <code>relay</code> (true = geschlossen, nur im Modus manual)</li>
+    </ul>
+    <p>Die Werte stehen im Status unter <code>sources</code>, <code>pilotTone</code>, <code>loadMonitor</code>,
+       <code>gpio</code> (<code>null</code>, wenn das Gerät die Bereiche ablehnt) und im mezzo-value-Node.</p>
     <h3>Outputs</h3>
     <p>Die Eingangs-Message mit <code>msg.result = {ok, command, value, ...}</code>. Nach jedem Befehl wird der Status
        sofort neu gelesen, angeschlossene Status-Nodes melden die Änderung.</p>

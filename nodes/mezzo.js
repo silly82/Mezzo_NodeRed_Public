@@ -3,6 +3,10 @@ const { MezzoClient, DEFAULT_PORT } = require('../lib/mezzo-client');
 const map = require('../lib/mezzo-map');
 const { discover, probe } = require('../lib/mezzo-discover');
 const values = require('../lib/mezzo-values');
+const ext = require('../lib/mezzo-ext');
+
+// extension values (source selection, pilot tone, load monitor, GPI/GPO) join the mezzo-value catalog
+for (const v of ext.VALUES) if (!values.BY_KEY[v.key]) { values.VALUES.push(v); values.BY_KEY[v.key] = v; }
 
 const readOps = (defs) => defs.map(([, addr, size]) => ({ op: 'R', addr, size }));
 
@@ -77,6 +81,15 @@ module.exports = function (RED) {
                 }
                 const replies = await node.client.transact(readOps(map.STATUS_READS));
                 const st = map.decodeStatus(map.toBlocks(map.STATUS_READS, replies));
+                // extensions: one frame per feature; a NAK or timeout only blanks that feature
+                for (const g of ext.READ_GROUPS) {
+                    try {
+                        const r = await node.client.transact(readOps(g.reads));
+                        st[g.key] = ext.decodeGroup(g.key, map.toBlocks(g.reads, r));
+                    } catch (e) {
+                        st[g.key] = null;
+                    }
+                }
                 st.info = node.info;
                 st.timestamp = new Date().toISOString();
                 const changed = !node.status || stableView(node.status) !== stableView(st);
@@ -128,7 +141,7 @@ module.exports = function (RED) {
                 stepChain = run.catch(() => {});
                 return run;
             }
-            const ops = map.encodeCommand(cmd);
+            const ops = ext.encode(cmd) || map.encodeCommand(cmd);
             const replies = await node.client.transact(ops);
             const nak = replies.filter(r => r.nak);
             if (nak.length) throw new Error(`device rejected write (NAK) at ${nak.map(r => '0x' + r.addr.toString(16)).join(', ')}`);
