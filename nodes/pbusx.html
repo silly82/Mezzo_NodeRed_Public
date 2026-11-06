@@ -177,15 +177,15 @@
        – vor dem Einsatz prüfen (siehe <code>docs/PBUSX.md</code>). Die Spezifikation nennt UDP-Port 8002, der Nota
        meldet 8082; die Gerätesuche übernimmt den gemeldeten Port.</p>
     <p><b>Gerät</b>: Beim Öffnen wird das Netzwerk per Broadcast (UDP 12345) durchsucht. Die Auswahl füllt IP,
-       Modell, Seriennummer und MAC aus. Die MAC wird beim Nota für <i>Blink</i> gebraucht (der DC Rider blinkt über PBusX).</p>
+       Modell, Seriennummer und MAC aus. Blink läuft über PBusX; die MAC ist nur noch Rückfallebene.</p>
     <p><b>IP-Adresse</b>: auch manuell möglich (z.B. anderes Subnetz). <i class="fa fa-plug"></i> Testen liest Modell
        und Seriennummer direkt über PBusX.</p>
     <p><b>Modell</b>: „automatisch“ erkennt das Modell und ermittelt die Zahl der Eingänge und Kanäle am Gerät
        (fehlende Blöcke antworten mit NAK). Weicht ein gewähltes Modell davon ab, wird die erkannte Kanalzahl verwendet
        und eine Warnung ausgegeben.</p>
-    <p>Gelesen werden u.a. Gerätename, User-/Way-Gain, Mute, Polarität, Delay, Way-Name, Matrix, Temperatur (%);
-       beim DC Rider zusätzlich Alarme (Gerät/Kanal/Eingang, z.B. Kurzschluss), Rails, Batterien, Temperatur °C,
-       Standby, Nickname und Eingangs-Gain. Meter optional mit eigenem Intervall.</p>
+    <p>Gelesen werden u.a. Gerätename, Nickname, User-/Way-Gain, Mute, Polarität, Delay, Way-Name, Matrix,
+       Eingangs-Gain/-Mute, Alarme (Gerät/Kanal/Eingang, z.B. Kurzschluss), Temperatur (%);
+       beim DC Rider zusätzlich Rails, Batterien, Temperatur °C, Ruftaste und Standby. Meter optional mit eigenem Intervall.</p>
 </script>
 
 <!-- ===================================================================== pbusx-status -->
@@ -243,10 +243,10 @@
         <dt>payload (status) <span class="property-type">object</span></dt>
         <dd><code>info</code> (Modell, Seriennummer, <code>draft</code>), <code>layout</code> (<code>inputs</code>, <code>outputs</code>),
             <code>name</code>, <code>state</code>, <code>statusCode</code>,
-            <code>alarms</code> (<code>any</code>, <code>machine</code> = {raw, flags}; DC Rider zusätzlich <code>output[]</code>/<code>input[]</code>),
+            <code>alarms</code> (<code>any</code>, <code>machine</code>, <code>output[]</code>, <code>input[]</code> = {raw, flags}),
             <code>supply</code> (Nota: <code>temperaturePct</code>, <code>rail</code>, <code>aux</code>, <code>raw</code>;
             DC Rider: <code>rails[4]</code>, <code>vbatt[2]</code>, <code>temperatureC</code>, <code>temperaturePct</code>),
-            DC Rider: <code>standby</code>, <code>nickname</code>, <code>callButton</code>, <code>input</code> (gainDb, mute),
+            <code>nickname</code>, <code>input</code> (gainDb, mute); DC Rider: <code>standby</code>, <code>callButton</code>,
             <code>user</code> (gainDb, delay in s, shadingDb, polarityInverted, mute),
             <code>output</code> (Ways: name, gainDb, delay, polarityInverted, mute),
             <code>matrix</code> (<code>gainDb[eingang][kanal]</code>, <code>mute[eingang][kanal]</code>).
@@ -337,9 +337,9 @@
             <option value="matrixMute">Matrix Kreuzpunkt Mute</option>
             <option value="standby">Standby (DC Rider)</option>
             <option value="power">Power ein/aus (DC Rider)</option>
-            <option value="inputGain">Eingang Gain dB (DC Rider)</option>
-            <option value="inputMute">Eingang Mute (DC Rider)</option>
-            <option value="nickname">Nickname (DC Rider)</option>
+            <option value="inputGain">Eingang Gain dB</option>
+            <option value="inputMute">Eingang Mute</option>
+            <option value="nickname">Nickname</option>
             <option value="reboot">Reboot (DC Rider, payload "reboot")</option>
             <option value="write">Raw Write</option>
         </select>
@@ -388,22 +388,21 @@
     </dl>
     <h3>Befehle</h3>
     <ul>
-        <li><code>blink</code> – LED-Identifikation (true = start, false = stop). Nota: über das Suchprotokoll,
-            braucht die MAC im Config-Node, blinkt einige Male. DC Rider: über PBusX, blinkt 10 s.</li>
+        <li><code>blink</code> – LED-Identifikation über PBusX (true = start, ca. 10 s; false = stop).
+            Lehnt das Gerät ab, wird das Suchprotokoll verwendet (braucht die MAC im Config-Node).</li>
         <li><code>volumeUp</code> / <code>volumeDown</code> / <code>gainStep</code> – Lautstärke relativ (User oder Way Gain)</li>
         <li><code>gain</code>, <code>mute</code>, <code>polarity</code>, <code>delay</code> – User-Block pro Kanal</li>
         <li><code>outputGain</code>, <code>outputMute</code>, <code>outputPolarity</code> – Ways (Polarität/Mute: Zuordnung wahrscheinlich, nicht einzeln bestätigt)</li>
         <li><code>matrixGain</code>, <code>matrixMute</code> – Matrix-Kreuzpunkt</li>
+        <li><code>inputGain</code>, <code>inputMute</code> – Eingang vor der Matrix (<code>source</code> oder <code>channel</code> = Eingang)</li>
+        <li><code>nickname</code> – Text, max. 19 Zeichen</li>
         <li><code>write</code> – Rohzugriff: <code>payload = {address, data}</code></li>
     </ul>
     <h3>Nur DC Rider</h3>
     <ul>
-        <li><code>standby</code> (true = Standby) bzw. <code>power</code> (true = ein)</li>
-        <li><code>inputGain</code>, <code>inputMute</code> – Eingang vor der Matrix (<code>source</code> oder <code>channel</code> = Eingang)</li>
-        <li><code>nickname</code> – Text, max. 19 Zeichen</li>
-        <li><code>reboot</code> – nur mit <code>payload = "reboot"</code></li>
+        <li><code>standby</code> (true = Standby) bzw. <code>power</code> (true = ein) – der Nota antwortet hier mit NAK</li>
+        <li><code>reboot</code> – nur mit <code>payload = "reboot"</code> (am Nota nicht getestet, daher gesperrt)</li>
     </ul>
-    <p>Beim Nota sind diese Befehle nicht verfügbar (Fehlermeldung); die Adressen sind dort unbekannt.</p>
 </script>
 
 <!-- ===================================================================== pbusx-value -->

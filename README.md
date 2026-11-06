@@ -438,15 +438,15 @@ Palettenkategorie **Powersoft**. Die Bedienung ist in der Node-Hilfe (Info-Seite
 | Nota 142 | am Gerät getestet (Firmware 1.2.4.0): Gerätesuche, Status, Meter, Lautstärke/Mute/Polarität/Delay, Matrix, Blink, Dashboard |
 | DC Rider | nach der Powersoft-Spezifikation umgesetzt, **noch nicht am Gerät getestet** – vor dem Einsatz prüfen |
 
-- **Gerätesuche** per Broadcast (UDP 12345), liefert auch die MAC (beim Nota für *Blink* nötig); Verbindungstest per IP.
+- **Gerätesuche** per Broadcast (UDP 12345), liefert auch die MAC; Verbindungstest per IP. *Blink* läuft über PBusX.
   Port: der Nota meldet UDP 8082, die DC-Rider-Spezifikation nennt 8002 – die Suche übernimmt den gemeldeten Port.
 - Die Zahl der Eingänge und Kanäle wird am Gerät ermittelt.
 - **Befehle**: `blink`, `gain`, `mute`, `polarity`, `delay` (ms), `outputGain`, `outputMute`, `outputPolarity`,
-  `matrixGain`, `matrixMute`, `volumeUp`/`volumeDown`/`gainStep`, `write`.
-  Nur DC Rider: `standby`/`power`, `inputGain`/`inputMute`, `nickname`, `reboot` (payload `"reboot"`).
-- **Status**: Gerätename, Temperatur, Rail-Spannung, User-/Way-Werte, Way-Name, Matrix, Geräte-Alarme;
-  DC Rider zusätzlich Kanal-Alarme (u.a. Kurzschluss), Rails, Batteriespannungen, Temperatur °C, Standby, Nickname.
-- **Meter**: Eingang Peak/RMS, Ausgangsspannung/-strom, Signal, Clip, Headroom.
+  `matrixGain`, `matrixMute`, `inputGain`/`inputMute`, `nickname`, `volumeUp`/`volumeDown`/`gainStep`, `write`.
+  Nur DC Rider: `standby`/`power`, `reboot` (payload `"reboot"`).
+- **Status**: Gerätename, Nickname, Temperatur, Rail-Spannung, User-/Way-Werte, Way-Name, Matrix, Eingangs-Gain/Mute,
+  Alarme (Gerät, Kanal inkl. Kurzschluss, Eingang); DC Rider zusätzlich Rails, Batteriespannungen, Temperatur °C, Standby.
+- **Meter**: Eingang Peak/RMS, Ausgangsspannung/-strom, Signal, Clip, Headroom, Limiter-Gain-Reduktion (dB).
 - **Dashboard**: `examples/nota-dashboard.json`, erreichbar unter `http://<node-red>:1880/dashboard/nota`.
 
 ---

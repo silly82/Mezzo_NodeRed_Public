@@ -161,12 +161,12 @@ module.exports = function (RED) {
                 const on = cmd.value === undefined || cmd.value === null || cmd.value === '' ? true : map.toBool(cmd.value);
                 if (!node.layout && !node.mac) await node.pollStatus();
                 const op = node.layout ? map.blinkOp(node.layout, on) : null;
-                if (op) { // DC Rider: blink register via PBusX (10 s), no MAC needed
+                if (op) { // blink register via PBusX (≈10 s), no MAC needed – Nota 142 and DC Rider
                     const [r] = await node.client.transact([op]);
-                    if (r.nak) throw new Error('device rejected blink (NAK)');
-                    return { on, via: 'pbusx' };
+                    if (!r.nak) return { on, via: 'pbusx' };
+                    if (!node.mac) throw new Error('device rejected blink (NAK)');
                 }
-                return blink(node.mac, on);
+                return blink(node.mac, on); // fallback: discovery text protocol (needs the MAC)
             }
             if (!node.layout) await node.pollStatus();
             const st = map.stepCommand(cmd);
