@@ -3,7 +3,15 @@
 Node-RED-Nodes zum **Steuern und Überwachen von Powersoft-Mezzo-Verstärkern** über das native
 Powersoft-Protokoll (UDP, Port 8002) – ohne Armonía, ohne Zusatzhardware.
 
-Paketname: `node-red-contrib-powersoft-mezzo` · Getestet mit **Mezzo 324 A** (Firmware 1.6.1.24).
+Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
+([Releases](https://github.com/silly82/Mezzo_NodeRed_Public/releases))
+
+**Getestet mit:** Powersoft **Mezzo 324 A** (Firmware 1.6.1.24), Node-RED 4.x, FlowFuse Dashboard 1.35.
+
+> **Ausblick Nota 142 / DC Rider:** Eine Unterstützung für Nota 142 und DC Rider 408 / 8016 (Protokoll PBusX)
+> ist in Arbeit. Der **Nota 142** ist am Gerät getestet (Firmware 1.2.4.0: Gerätesuche, Status, Meter,
+> Lautstärke/Mute/Polarität/Delay, Matrix, Blink, Dashboard in Node-RED 4.1). Der **DC Rider** muss noch an
+> einem Gerät getestet werden. Beides ist **noch nicht** in diesem Download enthalten.
 
 > Dies ist der öffentliche Download-Stand (Plugin + Anleitung). Fragen und Fehlermeldungen bitte über
 > *Issues* in diesem Repository.
@@ -89,9 +97,12 @@ Danach **Node-RED neu starten**. Die Nodes erscheinen in der Palette in der Kate
 
 Aktualisieren: denselben Befehl erneut ausführen und Node-RED neu starten.
 
+Eine bestimmte Version installieren (z.B. 0.2.0): `npm install github:silly82/Mezzo_NodeRed_Public#v0.2.0`
+
 ### Variante B – ZIP herunterladen
 
-1. Auf GitHub **Code → Download ZIP** (oder unter *Releases* die ZIP-Datei) herunterladen.
+1. Unter [*Releases*](https://github.com/silly82/Mezzo_NodeRed_Public/releases) die ZIP-Datei
+   (`node-red-contrib-powersoft-mezzo-0.2.0.zip`) herunterladen – oder auf GitHub **Code → Download ZIP**.
 2. Entpacken, z.B. nach `~/mezzo-plugin`.
 3. Installieren:
 
