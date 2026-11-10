@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-powersoft-mezzo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Node-RED-Nodes zum Steuern und Überwachen von Powersoft-Verstärkern über UDP / Node-RED nodes to control and monitor Powersoft amplifiers",
   "main": "nodes/mezzo.js",
   "keywords": [

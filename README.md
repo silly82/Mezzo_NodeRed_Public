@@ -3,16 +3,16 @@
 Node-RED-Nodes zum **Steuern und Überwachen von Powersoft-Verstärkern** über das native
 Powersoft-Protokoll (UDP) – ohne Armonía, ohne Zusatzhardware.
 
-Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.2.0**
+Paketname: `node-red-contrib-powersoft-mezzo` · Aktuelle Version: **0.3.0**
 ([Releases](https://github.com/silly82/Mezzo_NodeRed_Public/releases))
 
-**Getestet mit:** Powersoft **Mezzo 324 A** (Firmware 1.6.1.24), Node-RED 4.x, FlowFuse Dashboard 1.35.
+**Getestet mit:** Powersoft **Mezzo 324 A** (Firmware 1.6.1.24) und **Nota 142** (Firmware 1.2.4.0), Node-RED 4.x,
+FlowFuse Dashboard 1.35.
 
 > **Vorschau Nota 142 / DC Rider:** Nodes für Nota 142 und DC Rider (Protokoll PBusX) sind enthalten –
 > siehe [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau). Der **Nota 142** ist am Gerät getestet
 > (Firmware 1.2.4.0), der **DC Rider** ist nach der Powersoft-Spezifikation umgesetzt, aber **noch nicht am Gerät
-> getestet**. Enthalten ab dem aktuellen Stand auf GitHub (`npm install github:silly82/Mezzo_NodeRed_Public`);
-> das Release 0.2.0 enthält die Vorschau noch nicht.
+> getestet**. Enthalten ab Release **0.3.0**.
 
 > Dies ist der öffentliche Download-Stand (Plugin + Anleitung). Fragen und Fehlermeldungen bitte über
 > *Issues* in diesem Repository.
@@ -100,12 +100,12 @@ Danach **Node-RED neu starten**. Die Nodes erscheinen in der Palette in der Kate
 
 Aktualisieren: denselben Befehl erneut ausführen und Node-RED neu starten.
 
-Eine bestimmte Version installieren (z.B. 0.2.0): `npm install github:silly82/Mezzo_NodeRed_Public#v0.2.0`
+Eine bestimmte Version installieren (z.B. 0.3.0): `npm install github:silly82/Mezzo_NodeRed_Public#v0.3.0`
 
 ### Variante B – ZIP herunterladen
 
 1. Unter [*Releases*](https://github.com/silly82/Mezzo_NodeRed_Public/releases) die ZIP-Datei
-   (`node-red-contrib-powersoft-mezzo-0.2.0.zip`) herunterladen – oder auf GitHub **Code → Download ZIP**.
+   (`node-red-contrib-powersoft-mezzo-0.3.0.zip`) herunterladen – oder auf GitHub **Code → Download ZIP**.
 2. Entpacken, z.B. nach `~/mezzo-plugin`.
 3. Installieren:
 
