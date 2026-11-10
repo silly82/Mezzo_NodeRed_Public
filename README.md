@@ -468,7 +468,10 @@ Palettenkategorie **Powersoft**. Die Bedienung ist in der Node-Hilfe (Info-Seite
   Nur DC Rider: `standby`/`power`, `reboot` (payload `"reboot"`).
 - **Status**: Gerätename, Nickname, Temperatur, Rail-Spannung, User-/Way-Werte, Way-Name, Matrix, Eingangs-Gain/Mute,
   Alarme (Gerät, Kanal inkl. Kurzschluss, Eingang); DC Rider zusätzlich Rails, Batteriespannungen, Temperatur °C, Standby.
-- **Meter**: Eingang Peak/RMS, Ausgangsspannung/-strom, Signal, Clip, Headroom, Limiter-Gain-Reduktion (dB).
+- **Meter**: Eingang Peak/RMS (gewählte Quelle), Ausgangsspannung/-strom, Signal, Clip, Headroom, Limiter-Gain-Reduktion (dB).
+- **Nur Nota** (nach Powersoft-Spezifikation, am Nota 142 geprüft): Quellenwahl/Backup (`backupEnable`, `sourcePriority` …),
+  Pilotton (`pilotSource`, `pilotGenerator`), Lastüberwachung mit Impedanz (`loadMonitor`), Zone (`zoneGain`, `zoneMute`),
+  `microphone`; Status `sources`, `pilotTone`, `loadMonitor`, `zone`.
 - **Dashboard**: `examples/nota-dashboard.json`, erreichbar unter `http://<node-red>:1880/dashboard/nota`.
 
 ---

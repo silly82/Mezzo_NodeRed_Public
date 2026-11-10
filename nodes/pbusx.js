@@ -223,7 +223,7 @@ module.exports = function (RED) {
             if (st.alarms && st.alarms.any) {
                 const a = st.alarms, flags = [...((a.machine && a.machine.flags) || []),
                     ...(a.output || []).flatMap((o, i) => (o && o.raw ? o.flags.map((x) => `CH${i + 1} ${x}`) : []))];
-                return node.status({ fill: 'yellow', shape: 'dot', text: (flags.length ? flags.join(', ') : `Status ${st.state}/${st.statusCode}`).slice(0, 60) + draft });
+                return node.status({ fill: 'yellow', shape: 'dot', text: (flags.length ? flags.join(', ') : `Alarm 0x${(st.state >>> 0).toString(16)}`).slice(0, 60) + draft });
             }
             if (st.standby) return node.status({ fill: 'grey', shape: 'dot', text: `Standby${draft}` });
             node.status({ fill: 'green', shape: 'dot', text: `ok${draft}` });

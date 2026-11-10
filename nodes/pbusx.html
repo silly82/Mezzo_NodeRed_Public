@@ -242,11 +242,13 @@
     <dl class="message-properties">
         <dt>payload (status) <span class="property-type">object</span></dt>
         <dd><code>info</code> (Modell, Seriennummer, <code>draft</code>), <code>layout</code> (<code>inputs</code>, <code>outputs</code>),
-            <code>name</code>, <code>state</code>, <code>statusCode</code>,
+            <code>name</code> (Nota: Gerätename 0x1000, sonst AES67-Name <code>aes67Name</code>), <code>state</code>,
             <code>alarms</code> (<code>any</code>, <code>machine</code>, <code>output[]</code>, <code>input[]</code> = {raw, flags}),
-            <code>supply</code> (Nota: <code>temperaturePct</code>, <code>rail</code>, <code>aux</code>, <code>raw</code>;
-            DC Rider: <code>rails[4]</code>, <code>vbatt[2]</code>, <code>temperatureC</code>, <code>temperaturePct</code>),
-            <code>nickname</code>, <code>input</code> (gainDb, mute); DC Rider: <code>standby</code>, <code>callButton</code>,
+            <code>supply</code> (Nota: <code>rail</code> (PVDD), <code>vbatt</code>, <code>temperatures</code> {ntc, tas, cpu},
+            <code>temperatureC</code>, <code>temperaturePct</code>; DC Rider: <code>rails[4]</code>, <code>vbatt[2]</code>,
+            <code>temperatureC</code>, <code>temperaturePct</code>), <code>callButton</code>, Nota: <code>mic[2]</code> {peak, rms},
+            <code>nickname</code>, <code>input</code> (gainDb, mute); DC Rider: <code>standby</code>;
+            Nota: <code>sources</code>, <code>pilotTone</code>, <code>loadMonitor</code>, <code>zone</code>,
             <code>user</code> (gainDb, delay in s, shadingDb, polarityInverted, mute),
             <code>output</code> (Ways: name, gainDb, delay, polarityInverted, mute),
             <code>matrix</code> (<code>gainDb[eingang][kanal]</code>, <code>mute[eingang][kanal]</code>).
@@ -341,6 +343,13 @@
             <option value="inputMute">Eingang Mute</option>
             <option value="nickname">Nickname</option>
             <option value="reboot">Reboot (DC Rider, payload "reboot")</option>
+            <option value="backupEnable">Backup-Quelle ein/aus (Nota)</option>
+            <option value="pilotSource">Pilotton-Erkennung Eingang (Nota)</option>
+            <option value="pilotGenerator">Pilotton-Generator (Nota)</option>
+            <option value="loadMonitor">Lastüberwachung (Nota)</option>
+            <option value="zoneMute">Zone Mute (Nota)</option>
+            <option value="zoneGain">Zone Gain dB (Nota)</option>
+            <option value="microphone">Mikrofon ein/aus (Nota)</option>
             <option value="write">Raw Write</option>
         </select>
     </div>
@@ -402,6 +411,21 @@
     <ul>
         <li><code>standby</code> (true = Standby) bzw. <code>power</code> (true = ein) – der Nota antwortet hier mit NAK</li>
         <li><code>reboot</code> – nur mit <code>payload = "reboot"</code> (am Nota nicht getestet, daher gesperrt)</li>
+    </ul>
+    <h3>Nur Nota (Spezifikation 1.0.6)</h3>
+    <p>Parameter als Objekt in <code>msg.payload</code>, z.B.
+       <code>{command: "loadMonitor", channel: 1, enable: true, frequency: 20000, low: 4, high: 16}</code>.
+       Eingangsbezogene Befehle: <code>source</code> oder <code>channel</code> = Eingang 1–4.</p>
+    <ul>
+        <li><b>Quellenwahl / Backup</b> (pro Eingang): <code>backupEnable</code>, <code>sourcePriority</code> {value: [Slot für Prio 1–4]},
+            <code>sourceDefaultPriority</code> (1–4), <code>sourceId</code> {slot, value −1…31}, <code>backupThresholdMode</code>
+            (regular/threshold), <code>backupThreshold</code> {slot, value dB}</li>
+        <li><b>Pilotton Eingang</b>: <code>pilotSource</code> {enable, frequency, low, high (Vrms), gpo} und Einzelbefehle</li>
+        <li><b>Pilotton-Generator</b> (pro Kanal): <code>pilotGenerator</code> {enable, frequency, amplitude (vermutlich Vrms, Werkseinstellung 2, max. 10)}</li>
+        <li><b>Lastüberwachung</b> (pro Kanal): <code>loadMonitor</code> {enable, frequency, low, high} und Einzelbefehle;
+            die Impedanz wird mit Pilotton gemessen</li>
+        <li><b>Zone</b> (pro Kanal): <code>zoneEnable</code>, <code>zoneMute</code>, <code>zoneGain</code>, <code>subzoneGain</code> (dB)</li>
+        <li><code>microphone</code> – Mikrofon ein/aus</li>
     </ul>
 </script>
 
