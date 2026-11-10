@@ -471,7 +471,8 @@ Palettenkategorie **Powersoft**. Die Bedienung ist in der Node-Hilfe (Info-Seite
 - **Meter**: Eingang Peak/RMS (gewählte Quelle), Ausgangsspannung/-strom, Signal, Clip, Headroom, Limiter-Gain-Reduktion (dB).
 - **Nur Nota** (nach Powersoft-Spezifikation, am Nota 142 geprüft): Quellenwahl/Backup (`backupEnable`, `sourcePriority` …),
   Pilotton (`pilotSource`, `pilotGenerator`), Lastüberwachung mit Impedanz (`loadMonitor`), Zone (`zoneGain`, `zoneMute`),
-  `microphone`; Status `sources`, `pilotTone`, `loadMonitor`, `zone`.
+  `microphone`, User-EQ (`userEq`), Dynamic EQ (`dynamicEq`), AES67-Routing (`aes67Route`);
+  Status `sources`, `pilotTone`, `loadMonitor`, `zone`, `userEq`, `dynamicEq`, `aes67Routing`.
 - **Dashboard**: `examples/nota-dashboard.json`, erreichbar unter `http://<node-red>:1880/dashboard/nota`.
 
 ---

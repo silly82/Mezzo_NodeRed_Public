@@ -249,6 +249,7 @@
             <code>temperatureC</code>, <code>temperaturePct</code>), <code>callButton</code>, Nota: <code>mic[2]</code> {peak, rms},
             <code>nickname</code>, <code>input</code> (gainDb, mute); DC Rider: <code>standby</code>;
             Nota: <code>sources</code>, <code>pilotTone</code>, <code>loadMonitor</code>, <code>zone</code>,
+            <code>userEq[kanal][band]</code>, <code>dynamicEq[kanal][band]</code>, <code>aes67Routing[n]</code>,
             <code>user</code> (gainDb, delay in s, shadingDb, polarityInverted, mute),
             <code>output</code> (Ways: name, gainDb, delay, polarityInverted, mute),
             <code>matrix</code> (<code>gainDb[eingang][kanal]</code>, <code>mute[eingang][kanal]</code>).
@@ -350,6 +351,9 @@
             <option value="zoneMute">Zone Mute (Nota)</option>
             <option value="zoneGain">Zone Gain dB (Nota)</option>
             <option value="microphone">Mikrofon ein/aus (Nota)</option>
+            <option value="userEq">User-EQ Band (Nota)</option>
+            <option value="dynamicEq">Dynamic EQ Band (Nota)</option>
+            <option value="aes67Route">AES67-Routing (Nota)</option>
             <option value="write">Raw Write</option>
         </select>
     </div>
@@ -426,6 +430,13 @@
             die Impedanz wird mit Pilotton gemessen</li>
         <li><b>Zone</b> (pro Kanal): <code>zoneEnable</code>, <code>zoneMute</code>, <code>zoneGain</code>, <code>subzoneGain</code> (dB)</li>
         <li><code>microphone</code> – Mikrofon ein/aus</li>
+        <li><b>User-EQ</b> (pro Kanal, Band 1–4): <code>userEq</code> {channel, band, enable, type (peaking, lowShelf,
+            highShelf, lowPass, highPass, bandPass, bandStop, allPass), frequency, q, slope, gainDb (−15…+15 dB)}</li>
+        <li><b>Dynamic EQ</b> (pro Kanal, Band 1–3): <code>dynamicEq</code> {channel, band, enable, type (peaking, lowShelf,
+            highShelf), frequency, q, minGainDb, slope, ratio, threshold, attack, release (s), position
+            (preRmsLimiter, postRmsLimiter, postPeakLimiter)}</li>
+        <li><b>AES67-Routing</b> (Sendekanal 1–4): <code>aes67Route</code> {output, tap (off, sourceSelection, matrix,
+            processing, unprocessedInput, processingCurrent, processingVoltage), source (Kanal), gainDb}</li>
     </ul>
 </script>
 
