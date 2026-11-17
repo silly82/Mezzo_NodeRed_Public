@@ -25,10 +25,11 @@
             meterInterval: { value: 0, validate: RED.validators.number() },
             timeout: { value: 1000, validate: RED.validators.number() },
             serial: { value: '' },
-            modelName: { value: '' }
+            modelName: { value: '' },
+            simulate: { value: false }
         },
         label: function () {
-            return this.name || ((this.modelName || 'Nota/DC Rider') + ' ' + this.host);
+            return (this.name || ((this.modelName || 'Nota/DC Rider') + ' ' + this.host)) + (this.simulate ? ' (Sim)' : '');
         },
         oneditprepare: function () {
             const node = this;
@@ -100,7 +101,7 @@
                 if (!host) { RED.notify('Bitte zuerst eine IP eingeben', 'warning'); return; }
                 const $b = $(this).prop('disabled', true);
                 $info.html('<i class="fa fa-spinner fa-spin"></i> teste ' + RED.utils.sanitize(host) + ' …');
-                $.getJSON('pbusx/probe', { host: host, port: $('#node-config-input-port').val() })
+                $.getJSON('pbusx/probe', { host: host, port: $('#node-config-input-port').val(), simulate: $('#node-config-input-simulate').is(':checked') })
                     .done(function (d) {
                         apply(d);
                         showInfo(d, true);
@@ -168,10 +169,18 @@
         <label for="node-config-input-timeout"><i class="fa fa-hourglass"></i> Timeout (ms)</label>
         <input type="number" id="node-config-input-timeout" style="width:100px">
     </div>
+    <div class="form-row">
+        <label for="node-config-input-simulate"><i class="fa fa-flask"></i> Simulator</label>
+        <input type="checkbox" id="node-config-input-simulate" style="width:auto; vertical-align:top">
+        <span style="color:#888"> ohne Gerät testen (simulierte Werte, kein Netzwerk)</span>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="pbusx-amp">
     <p>Verbindung zu einem Powersoft <b>Nota 142</b> oder <b>DC Rider</b> über PBusX (UDP).</p>
+    <p><b>Simulator</b>: ohne Gerät testen – ein simulierter Nota 142 antwortet mit realistischen Werten (inkl. Quellenwahl,
+       Pilotton, Lastüberwachung, EQ), speichert Schreibzugriffe und liefert Meter aus einem Musiksignal. Für alle
+       Verstärker auf einmal: Node-RED mit <code>POWERSOFT_SIM=1</code> starten.</p>
     <p><b>Achtung:</b> Die Adresstabelle des Nota 142 stammt aus Mitschnitten und ist am Gerät geprüft.
        Der <b>DC Rider</b> folgt der Powersoft-Spezifikation 1.0.3 (FW 1.0.2.0), ist aber <b>noch nicht am Gerät getestet</b>
        – vor dem Einsatz prüfen (siehe <code>docs/PBUSX.md</code>). Die Spezifikation nennt UDP-Port 8002, der Nota

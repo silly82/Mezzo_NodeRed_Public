@@ -33,9 +33,10 @@ FlowFuse Dashboard 1.35.
 10. [Dashboard](#dashboard)
 11. [Erweiterte Mezzo-Funktionen (ungetestet)](#erweiterte-mezzo-funktionen-ungetestet)
 12. [Nota 142 / DC Rider (Vorschau)](#nota-142--dc-rider-vorschau)
-13. [Wichtige Hinweise](#wichtige-hinweise)
-14. [Fehlersuche](#fehlersuche)
-15. [Lizenz](#lizenz)
+13. [Simulator-Modus](#simulator-modus)
+14. [Wichtige Hinweise](#wichtige-hinweise)
+15. [Fehlersuche](#fehlersuche)
+16. [Lizenz](#lizenz)
 
 ---
 
@@ -474,6 +475,27 @@ Palettenkategorie **Powersoft**. Die Bedienung ist in der Node-Hilfe (Info-Seite
   `microphone`, User-EQ (`userEq`), Dynamic EQ (`dynamicEq`), AES67-Routing (`aes67Route`);
   Status `sources`, `pilotTone`, `loadMonitor`, `zone`, `userEq`, `dynamicEq`, `aes67Routing`.
 - **Dashboard**: `examples/nota-dashboard.json`, erreichbar unter `http://<node-red>:1880/dashboard/nota`.
+
+---
+
+## Simulator-Modus
+
+Zum Testen ohne Gerät (Flows, Dashboard, Schulung) antwortet ein **simulierter Mezzo 324 A** bzw. **Nota 142**:
+
+- realistische Werkswerte (Modell, Seriennummer, Gains, Namen, EQ, Quellenwahl …)
+- Schreibzugriffe werden gespeichert und zurückgelesen (Gain, Mute, Matrix, Nickname, Standby, EQ …)
+- Meter folgen einem Musiksignal auf Eingang 1/2 durch Matrix, User- und Way-Gain; Mute und Standby ergeben Stille
+- NAK wie am echten Gerät (fehlende Kanäle, Mezzo „Auto Turn On“, Nota-Standby)
+- kein Netzwerkverkehr
+
+Einschalten:
+
+- **pro Verstärker**: im Config-Node (mezzo-amp / pbusx-amp) das Häkchen **Simulator** setzen – der Name zeigt dann „(Sim)“
+- **für alle Verstärker**: Node-RED mit der Umgebungsvariable `POWERSOFT_SIM=1` starten, z.B.
+  `POWERSOFT_SIM=1 node-red` (Linux/macOS) oder in PowerShell `$env:POWERSOFT_SIM = '1'; node-red`.
+  Die Gerätesuche im Editor listet dann die simulierten Geräte.
+
+Status-Nodes zeigen „(Simulator)“. Ein simuliertes Gerät pro IP-Adresse, gemeinsam für alle Nodes.
 
 ---
 

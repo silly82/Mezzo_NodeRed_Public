@@ -1,5 +1,6 @@
 'use strict';
 const { MezzoClient, DEFAULT_PORT } = require('../lib/mezzo-client');
+const sim = require('../lib/sim');
 const map = require('../lib/mezzo-map');
 const { discover, probe } = require('../lib/mezzo-discover');
 const values = require('../lib/mezzo-values');
@@ -22,6 +23,7 @@ module.exports = function (RED) {
     // Used by the mezzo-amp config dialog: device dropdown (discovery) and connection test.
     RED.httpAdmin.get('/mezzo/discover', RED.auth.needsPermission('mezzo-amp.read'), async (req, res) => {
         try {
+            if (sim.envOn()) return res.json(sim.discoverMezzo());
             res.json(await discover({ timeout: Math.min(Number(req.query.timeout) || 1500, 5000) }));
         } catch (e) { res.status(500).json({ error: e.message }); }
     });
@@ -29,6 +31,7 @@ module.exports = function (RED) {
         const host = String(req.query.host || '').trim();
         if (!/^[a-zA-Z0-9.\-]+$/.test(host)) return res.status(400).json({ error: 'invalid host' });
         try {
+            if (sim.envOn() || req.query.simulate === 'true') return res.json(sim.discoverMezzo(host)[0]);
             res.json(await probe(host, { port: Number(req.query.port) || DEFAULT_PORT }));
         } catch (e) { res.status(404).json({ error: e.message }); }
     });
@@ -46,9 +49,11 @@ module.exports = function (RED) {
         node.serial = (config.serial || '').trim();   // expected device (from dropdown), optional
         node.model = config.model || '';
 
-        node.client = new MezzoClient({ host: node.host, port: node.port, timeout: node.timeout, retries: 2 });
+        node.simulated = sim.enabled(config);
+        node.client = new (node.simulated ? sim.SimMezzoClient : MezzoClient)({ host: node.host, port: node.port, timeout: node.timeout, retries: 2 });
         node.client.on('error', (e) => node.warn(`socket: ${e.message}`));
         node.client.on('warn', (m) => node.debug(m));
+        if (node.simulated) node.log(`Mezzo ${node.host}: SIMULATOR mode (no network traffic)`);
 
         node.connected = false;
         node.info = null;
@@ -75,7 +80,7 @@ module.exports = function (RED) {
             try {
                 if (!node.info) {
                     node.info = map.decodeInfo(await node.client.read(map.A.INFO, 0x7a));
-                    if (node.serial && node.info.serial !== node.serial) {
+                    if (node.serial && !node.simulated && node.info.serial !== node.serial) {
                         node.warn(`device at ${node.host} has serial ${node.info.serial}, expected ${node.serial} (${node.model}). IP changed?`);
                     }
                 }
@@ -186,7 +191,8 @@ module.exports = function (RED) {
             if (!amp.connected) return node.status({ fill: 'red', shape: 'ring', text: amp.lastError || 'disconnected' });
             const st = amp.status || {};
             if (st.alarms && st.alarms.any) return node.status({ fill: 'yellow', shape: 'dot', text: `alarm: ${st.alarms.fault}` });
-            node.status({ fill: st.standby ? 'grey' : 'green', shape: 'dot', text: st.standby ? 'standby' : 'on' });
+            const simTxt = amp.simulated ? ' (Simulator)' : '';
+            node.status({ fill: st.standby ? 'grey' : 'green', shape: 'dot', text: (st.standby ? 'standby' : 'on') + simTxt });
         };
         const onConn = () => update();
         const onStatus = () => update();

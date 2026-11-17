@@ -4,6 +4,7 @@
  * Protocol and address map: docs/PBUSX.md.
  */
 const { PbusxClient, DEFAULT_PORT } = require('../lib/pbusx-client');
+const sim = require('../lib/sim');
 const map = require('../lib/pbusx-map');
 const { discover, probe, blink } = require('../lib/pbusx-discover');
 const values = require('../lib/pbusx-values');
@@ -21,6 +22,7 @@ module.exports = function (RED) {
     // ===================================================================== editor admin API
     RED.httpAdmin.get('/pbusx/discover', RED.auth.needsPermission('pbusx-amp.read'), async (req, res) => {
         try {
+            if (sim.envOn()) return res.json(sim.discoverPbusx());
             res.json(await discover({ timeout: Math.min(Number(req.query.timeout) || 1500, 5000) }));
         } catch (e) { res.status(500).json({ error: e.message }); }
     });
@@ -28,6 +30,7 @@ module.exports = function (RED) {
         const host = String(req.query.host || '').trim();
         if (!/^[a-zA-Z0-9.\-]+$/.test(host)) return res.status(400).json({ error: 'invalid host' });
         try {
+            if (sim.envOn() || req.query.simulate === 'true') return res.json(sim.discoverPbusx(host)[0]);
             res.json(await probe(host, { port: Number(req.query.port) || DEFAULT_PORT }));
         } catch (e) { res.status(404).json({ error: e.message }); }
     });
@@ -49,9 +52,11 @@ module.exports = function (RED) {
         node.timeout = Number(config.timeout) || 1000;
         node.serial = (config.serial || '').trim();
 
-        node.client = new PbusxClient({ host: node.host, port: node.port, timeout: node.timeout, retries: 2 });
+        node.simulated = sim.enabled(config);
+        node.client = new (node.simulated ? sim.SimPbusxClient : PbusxClient)({ host: node.host, port: node.port, timeout: node.timeout, retries: 2 });
         node.client.on('error', (e) => node.warn(`socket: ${e.message}`));
         node.client.on('warn', (m) => node.debug(m));
+        if (node.simulated) node.log(`PBusX ${node.host}: SIMULATOR mode (no network traffic)`);
 
         node.connected = false;
         node.info = null;       // {model, serial, modelName, family, draft}
@@ -94,7 +99,7 @@ module.exports = function (RED) {
             if (node.info.draft) {
                 node.warn(`${node.info.modelName}: address map from the DC Rider spec 1.0.3 / extrapolated, not yet verified on a device`);
             }
-            if (node.serial && info.serial !== node.serial) {
+            if (node.serial && !node.simulated && info.serial !== node.serial) {
                 node.warn(`device at ${node.host} has serial ${info.serial}, expected ${node.serial}. IP changed?`);
             }
             node.layout = layout;
@@ -219,7 +224,7 @@ module.exports = function (RED) {
         const update = () => {
             if (!amp.connected) return node.status({ fill: 'red', shape: 'ring', text: amp.lastError || 'disconnected' });
             const st = amp.status || {};
-            const draft = amp.info && amp.info.draft ? ' (Entwurf)' : '';
+            const draft = (amp.info && amp.info.draft ? ' (Entwurf)' : '') + (amp.simulated ? ' (Simulator)' : '');
             if (st.alarms && st.alarms.any) {
                 const a = st.alarms, flags = [...((a.machine && a.machine.flags) || []),
                     ...(a.output || []).flatMap((o, i) => (o && o.raw ? o.flags.map((x) => `CH${i + 1} ${x}`) : []))];
